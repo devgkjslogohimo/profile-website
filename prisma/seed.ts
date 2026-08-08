@@ -1,6 +1,8 @@
 import "dotenv/config"
+
 import { PrismaNeon } from "@prisma/adapter-neon"
 import { z } from "zod"
+
 import { PrismaClient } from "../src/generated/prisma/client"
 import { hashPassword } from "../src/lib/auth/password"
 
