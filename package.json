@@ -11,19 +11,34 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "typecheck": "tsc --noEmit",
-    "check": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm build"
+    "check": "pnpm lint && pnpm typecheck && pnpm format:check && pnpm build",
+    "db:check": "tsx scripts/check-db.ts",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "auth:password-check": "tsx scripts/check-password.ts",
+    "auth:session-check": "tsx scripts/check-session.ts",
+    "auth:permissions-check": "tsx scripts/check-permissions.ts",
+    "db:seed": "prisma db seed",
+    "auth:rate-limit-check": "tsx scripts/check-login-rate-limit.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
+    "@prisma/adapter-neon": "^7.9.1",
+    "@prisma/client": "^7.9.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.4.2",
+    "iron-session": "^8.0.4",
     "lucide-react": "^1.29.0",
     "next": "16.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "server-only": "^0.0.1",
     "shadcn": "^4.16.2",
     "tailwind-merge": "^3.6.0",
-    "tw-animate-css": "^1.4.0"
+    "tw-animate-css": "^1.4.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -37,8 +52,11 @@
     "eslint-plugin-unused-imports": "^4.4.1",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
+    "prisma": "^7.9.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.10",
     "typescript": "^5"
   },
-  "packageManager": "pnpm@11.17.0"
+  "packageManager": "pnpm@11.17.0",
+  "type": "module"
 }
