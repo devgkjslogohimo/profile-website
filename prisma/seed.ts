@@ -1,8 +1,6 @@
 import "dotenv/config"
-
 import { PrismaNeon } from "@prisma/adapter-neon"
 import { z } from "zod"
-
 import { PrismaClient } from "../src/generated/prisma/client"
 import { hashPassword } from "../src/lib/auth/password"
 
@@ -26,7 +24,34 @@ const adapter = new PrismaNeon({
 
 const prisma = new PrismaClient({ adapter })
 
-async function main() {
+const churchLocations = [
+  {
+    name: "GKJ Slogohimo",
+    slug: "gkj-slogohimo",
+    type: "CHURCH" as const,
+    sortOrder: 1,
+  },
+  {
+    name: "Pepanthan Jatisrono",
+    slug: "pepanthan-jatisrono",
+    type: "PEPANTHAN" as const,
+    sortOrder: 2,
+  },
+  {
+    name: "Pepanthan Joho",
+    slug: "pepanthan-joho",
+    type: "PEPANTHAN" as const,
+    sortOrder: 3,
+  },
+  {
+    name: "Pepanthan Jatiroto",
+    slug: "pepanthan-jatiroto",
+    type: "PEPANTHAN" as const,
+    sortOrder: 4,
+  },
+]
+
+async function seedSuperAdmin() {
   const email = env.SUPER_ADMIN_EMAIL.toLowerCase()
 
   const existingUser = await prisma.user.findUnique({
@@ -34,7 +59,7 @@ async function main() {
   })
 
   if (existingUser) {
-    console.log("SUPER ADMIN: SKIPPED — user already exists")
+    console.log("SUPER ADMIN: SKIPPED— user already exists")
     console.log(`EMAIL: ${existingUser.email}`)
     return
   }
@@ -62,6 +87,40 @@ async function main() {
   console.log(`NAME: ${user.name}`)
   console.log(`EMAIL: ${user.email}`)
   console.log(`ROLE: ${user.role}`)
+}
+
+async function seedChurchLocations() {
+  for (const location of churchLocations) {
+    const result = await prisma.churchLocation.upsert({
+      where: { slug: location.slug },
+      update: {
+        name: location.name,
+        type: location.type,
+        sortOrder: location.sortOrder,
+        isActive: true,
+      },
+      create: {
+        ...location,
+        isActive: true,
+      },
+      select: {
+        name: true,
+        slug: true,
+        type: true,
+        sortOrder: true,
+        isActive: true,
+      },
+    })
+
+    console.log(
+      `CHURCH LOCATION: ${result.sortOrder} | ${result.name} | ${result.type} | ${result.slug} | active=${result.isActive}`
+    )
+  }
+}
+
+async function main() {
+  await seedSuperAdmin()
+  await seedChurchLocations()
 }
 
 main()

@@ -43,3 +43,22 @@ model LoginRateLimit {
 
   @@index([blockedUntil])
 }
+
+enum ChurchLocationType {
+  CHURCH
+  PEPANTHAN
+}
+
+model ChurchLocation {
+  id        String             @id @default(cuid())
+  name      String
+  slug      String             @unique
+  type      ChurchLocationType
+  sortOrder Int                @default(0)
+  isActive  Boolean            @default(true)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([type])
+  @@index([isActive, sortOrder])
+}
