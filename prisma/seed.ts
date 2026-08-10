@@ -53,6 +53,33 @@ const churchLocations = [
   },
 ]
 
+const worshipServiceRoles = [
+  {
+    name: "Pengkhotbah",
+    sortOrder: 1,
+  },
+  {
+    name: "Liturgos",
+    sortOrder: 2,
+  },
+  {
+    name: "Organis",
+    sortOrder: 3,
+  },
+  {
+    name: "Pemandu Pujian",
+    sortOrder: 4,
+  },
+  {
+    name: "Persembahan",
+    sortOrder: 5,
+  },
+  {
+    name: "Multimedia",
+    sortOrder: 6,
+  },
+]
+
 async function seedSuperAdmin() {
   const email = env.SUPER_ADMIN_EMAIL.toLowerCase()
 
@@ -120,9 +147,38 @@ async function seedChurchLocations() {
   }
 }
 
+async function seedWorshipServiceRoles() {
+  for (const role of worshipServiceRoles) {
+    const result = await prisma.worshipServiceRole.upsert({
+      where: {
+        name: role.name,
+      },
+      update: {
+        sortOrder: role.sortOrder,
+        isActive: true,
+      },
+      create: {
+        name: role.name,
+        sortOrder: role.sortOrder,
+        isActive: true,
+      },
+      select: {
+        name: true,
+        sortOrder: true,
+        isActive: true,
+      },
+    })
+
+    console.log(
+      `WORSHIP SERVICE ROLE: ${result.sortOrder} | ${result.name} | active=${result.isActive}`
+    )
+  }
+}
+
 async function main() {
   await seedSuperAdmin()
   await seedChurchLocations()
+  await seedWorshipServiceRoles()
 }
 
 main()

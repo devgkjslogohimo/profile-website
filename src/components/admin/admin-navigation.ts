@@ -73,6 +73,12 @@ const adminNavigationGroups: AdminNavigationGroup[] = [
         permission: "church.manage",
       },
       {
+        title: "Peran Petugas Ibadah",
+        href: "/admin/peran-petugas-ibadah",
+        icon: ClipboardList,
+        permission: "church.manage",
+      },
+      {
         title: "Jadwal PA",
         href: "/admin/jadwal-pa",
         icon: CalendarDays,

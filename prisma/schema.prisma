@@ -50,16 +50,104 @@ enum ChurchLocationType {
 }
 
 model ChurchLocation {
-  id            String             @id @default(cuid())
-  name          String
-  slug          String             @unique
-  googleMapsUrl String?
-  type          ChurchLocationType
-  sortOrder     Int                @default(0)
-  isActive      Boolean            @default(true)
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  id              String             @id @default(cuid())
+  name            String
+  slug            String             @unique
+  googleMapsUrl   String?
+  type            ChurchLocationType
+  sortOrder       Int                @default(0)
+  isActive        Boolean            @default(true)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  worshipServices WorshipService[]
 
   @@index([type])
   @@index([isActive, sortOrder])
+}
+
+model WorshipServiceRole {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignments WorshipServiceAssignment[]
+}
+
+model WorshipSchedule {
+  id          String    @id @default(cuid())
+  date        DateTime  @unique @db.Date
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  services WorshipService[]
+}
+
+model WorshipService {
+  id                String   @id @default(cuid())
+  worshipScheduleId String
+  churchLocationId  String
+  name              String
+  startsAt          DateTime
+  sortOrder         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  worshipSchedule WorshipSchedule @relation(fields: [worshipScheduleId], references: [id], onDelete: Cascade)
+
+  assignments WorshipServiceAssignment[]
+
+  churchLocation ChurchLocation @relation(fields: [churchLocationId], references: [id], onDelete: Restrict)
+
+  @@unique([worshipScheduleId, churchLocationId, startsAt])
+  @@index([worshipScheduleId, sortOrder])
+  @@index([churchLocationId])
+  @@index([startsAt])
+}
+
+model WorshipServiceAssignment {
+  id                   String   @id @default(cuid())
+  worshipServiceId     String
+  worshipServiceRoleId String
+  personName           String
+  sortOrder            Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  worshipService     WorshipService     @relation(fields: [worshipServiceId], references: [id], onDelete: Cascade)
+  worshipServiceRole WorshipServiceRole @relation(fields: [worshipServiceRoleId], references: [id], onDelete: Restrict)
+
+  @@index([worshipServiceId, sortOrder])
+  @@index([worshipServiceRoleId])
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+model BibleStudySchedule {
+  id         String    @id @default(cuid())
+  groupName  String
+  dayOfWeek  DayOfWeek
+  startTime  String
+  location   String?
+  leaderName String?
+  notes      String?
+  sortOrder  Int       @default(0)
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([dayOfWeek, sortOrder])
+  @@index([isActive])
 }

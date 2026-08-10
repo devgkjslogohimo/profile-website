@@ -8,6 +8,7 @@ const adminRoutePermissions: Record<string, Permission> = {
   halaman: "content.create",
 
   "jadwal-ibadah": "church.manage",
+  "peran-petugas-ibadah": "church.manage",
   "jadwal-pa": "church.manage",
   lokasi: "church.manage",
   pelayanan: "church.manage",
