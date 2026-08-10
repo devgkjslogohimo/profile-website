@@ -151,3 +151,19 @@ model BibleStudySchedule {
   @@index([dayOfWeek, sortOrder])
   @@index([isActive])
 }
+
+model ChurchMinistry {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  summary     String?
+  description String?
+  imageUrl    String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([sortOrder])
+  @@index([isActive])
+}
