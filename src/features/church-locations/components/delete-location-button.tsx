@@ -17,8 +17,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { toast } from "@/components/ui/toast"
-
-import { deleteChurchLocation } from "../_lib/actions/delete-church-location"
+import { deleteChurchLocation } from "@/features/church-locations/actions/delete-church-location"
 
 type DeleteLocationButtonProps = {
   id: string

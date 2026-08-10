@@ -5,9 +5,8 @@ import { notFound } from "next/navigation"
 import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { requirePermission } from "@/dal/auth"
+import { UpdateLocationForm } from "@/features/church-locations/components/update-location-form"
 import { prisma } from "@/lib/db/prisma"
-
-import { UpdateLocationForm } from "../../_components/update-location-form"
 
 export default async function EditChurchLocationPage({
   params,

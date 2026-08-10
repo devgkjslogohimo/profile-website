@@ -4,9 +4,8 @@ import { useActionState, useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/toast"
-
-import { toggleChurchLocation } from "../_lib/actions/toggle-church-location"
-import { initialToggleChurchLocationActionState } from "../_lib/toggle-action-state"
+import { toggleChurchLocation } from "@/features/church-locations/actions/toggle-church-location"
+import { initialToggleChurchLocationActionState } from "@/features/church-locations/lib/toggle-action-state"
 
 type ToggleLocationStatusProps = {
   id: string

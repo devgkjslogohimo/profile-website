@@ -1,9 +1,8 @@
 "use server"
 
 import { requirePermission } from "@/dal/auth"
+import type { DeleteChurchLocationActionState } from "@/features/church-locations/lib/delete-action-state"
 import { prisma } from "@/lib/db/prisma"
-
-import type { DeleteChurchLocationActionState } from "../delete-action-state"
 
 function isForeignKeyConstraintError(error: unknown): boolean {
   return typeof error === "object" && error !== null && "code" in error && error.code === "P2003"

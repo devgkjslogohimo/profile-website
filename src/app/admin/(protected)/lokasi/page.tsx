@@ -4,11 +4,10 @@ import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { requirePermission } from "@/dal/auth"
+import { CreateLocationForm } from "@/features/church-locations/components/create-location-form"
+import { DeleteLocationButton } from "@/features/church-locations/components/delete-location-button"
+import { ToggleLocationStatus } from "@/features/church-locations/components/toggle-location-status"
 import { prisma } from "@/lib/db/prisma"
-
-import { CreateLocationForm } from "./_components/create-location-form"
-import { DeleteLocationButton } from "./_components/delete-location-button"
-import { ToggleLocationStatus } from "./_components/toggle-location-status"
 
 export default async function ChurchLocationsPage() {
   await requirePermission("church.manage")

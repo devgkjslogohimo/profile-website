@@ -3,11 +3,16 @@
 import { revalidatePath } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
+import type {
+  ChurchLocationActionState,
+  ChurchLocationField,
+} from "@/features/church-locations/lib/action-state"
+import { createChurchLocationSlug } from "@/features/church-locations/lib/slug"
+import {
+  churchLocationFormSchema,
+  churchLocationSlugSchema,
+} from "@/features/church-locations/schemas/church-location-schema"
 import { prisma } from "@/lib/db/prisma"
-
-import type { ChurchLocationActionState, ChurchLocationField } from "../action-state"
-import { churchLocationFormSchema, churchLocationSlugSchema } from "../schema"
-import { createChurchLocationSlug } from "../slug"
 
 function getFieldErrors(
   issues: Array<{ path: PropertyKey[]; message: string }>

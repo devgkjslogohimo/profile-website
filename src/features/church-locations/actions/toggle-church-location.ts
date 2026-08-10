@@ -3,9 +3,8 @@
 import { revalidatePath } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
+import type { ToggleChurchLocationActionState } from "@/features/church-locations/lib/toggle-action-state"
 import { prisma } from "@/lib/db/prisma"
-
-import type { ToggleChurchLocationActionState } from "../toggle-action-state"
 
 async function toggleChurchLocation(
   id: string,

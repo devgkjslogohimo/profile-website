@@ -1,8 +1,9 @@
 "use client"
 
+import Link from "next/link"
 import { useActionState, useEffect, useMemo, useState } from "react"
 
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
@@ -13,26 +14,40 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "@/components/ui/toast"
-
+import { updateChurchLocation } from "@/features/church-locations/actions/update-church-location"
 import {
   type ChurchLocationActionState,
   initialChurchLocationActionState,
-} from "../_lib/action-state"
-import { createChurchLocation } from "../_lib/actions/create-church-location"
-import { createChurchLocationSlug } from "../_lib/slug"
+} from "@/features/church-locations/lib/action-state"
+import { createChurchLocationSlug } from "@/features/church-locations/lib/slug"
 
 type ChurchLocationType = "CHURCH" | "PEPANTHAN"
 
-type CreateLocationFieldsProps = {
+type UpdateLocationFormProps = {
+  location: {
+    id: string
+    name: string
+    type: ChurchLocationType
+    googleMapsUrl: string | null
+  }
+}
+
+type UpdateLocationFieldsProps = {
+  location: UpdateLocationFormProps["location"]
   formAction: (formData: FormData) => void
   pending: boolean
   fieldErrors: ChurchLocationActionState["fieldErrors"]
 }
 
-function CreateLocationFields({ formAction, pending, fieldErrors }: CreateLocationFieldsProps) {
-  const [name, setName] = useState("")
-  const [type, setType] = useState<ChurchLocationType>("PEPANTHAN")
-  const [googleMapsUrl, setGoogleMapsUrl] = useState("")
+function UpdateLocationFields({
+  location,
+  formAction,
+  pending,
+  fieldErrors,
+}: UpdateLocationFieldsProps) {
+  const [name, setName] = useState(location.name)
+  const [type, setType] = useState<ChurchLocationType>(location.type)
+  const [googleMapsUrl, setGoogleMapsUrl] = useState(location.googleMapsUrl ?? "")
 
   const slug = useMemo(() => createChurchLocationSlug(name), [name])
 
@@ -50,7 +65,6 @@ function CreateLocationFields({ formAction, pending, fieldErrors }: CreateLocati
           <Input
             id="name"
             name="name"
-            placeholder="Contoh: Pepanthan Ngadirojo"
             value={name}
             onChange={(event) => setName(event.target.value)}
             aria-invalid={Boolean(fieldErrors.name)}
@@ -60,10 +74,8 @@ function CreateLocationFields({ formAction, pending, fieldErrors }: CreateLocati
 
         <Field>
           <FieldLabel htmlFor="slug">Slug</FieldLabel>
-          <Input id="slug" value={slug} readOnly placeholder="dibuat-otomatis-dari-nama" />
-          <FieldDescription>
-            Dibuat otomatis dari nama lokasi dan tidak perlu diisi manual.
-          </FieldDescription>
+          <Input id="slug" value={slug} readOnly />
+          <FieldDescription>Slug diperbarui otomatis berdasarkan nama lokasi.</FieldDescription>
         </Field>
 
         <Field>
@@ -78,7 +90,7 @@ function CreateLocationFields({ formAction, pending, fieldErrors }: CreateLocati
             aria-invalid={Boolean(fieldErrors.googleMapsUrl)}
           />
           <FieldDescription>
-            Optional. Tempel link share Google Maps lokasi gereja atau pepanthan.
+            Optional. Kosongkan jika lokasi belum memiliki link Google Maps.
           </FieldDescription>
           <FieldError errors={fieldErrors.googleMapsUrl?.map((message) => ({ message }))} />
         </Field>
@@ -101,22 +113,24 @@ function CreateLocationFields({ formAction, pending, fieldErrors }: CreateLocati
         </Field>
       </FieldGroup>
 
-      <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">
-          Urutan tampilan ditentukan otomatis berdasarkan lokasi terakhir.
-        </p>
-
+      <div className="flex flex-wrap gap-3">
         <Button type="submit" disabled={pending}>
-          {pending ? "Menyimpan..." : "Tambah Lokasi"}
+          {pending ? "Menyimpan..." : "Simpan Perubahan"}
         </Button>
+
+        <Link href="/admin/lokasi" className={buttonVariants({ variant: "outline" })}>
+          Batal
+        </Link>
       </div>
     </form>
   )
 }
 
-function CreateLocationForm() {
+function UpdateLocationForm({ location }: UpdateLocationFormProps) {
+  const updateAction = updateChurchLocation.bind(null, location.id)
+
   const [state, formAction, pending] = useActionState(
-    createChurchLocation,
+    updateAction,
     initialChurchLocationActionState
   )
 
@@ -139,8 +153,8 @@ function CreateLocationForm() {
   }, [state])
 
   return (
-    <CreateLocationFields
-      key={state.submissionId}
+    <UpdateLocationFields
+      location={location}
       formAction={formAction}
       pending={pending}
       fieldErrors={state.fieldErrors}
@@ -148,4 +162,4 @@ function CreateLocationForm() {
   )
 }
 
-export { CreateLocationForm }
+export { UpdateLocationForm }
