@@ -203,3 +203,36 @@ model ChurchCouncilMember {
   @@index([periodStart])
   @@index([periodEnd])
 }
+
+model ChurchStatisticSnapshot {
+  id        String   @id @default(cuid())
+  title     String
+  asOfDate  DateTime @unique @db.Date
+  notes     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  metrics ChurchStatisticMetric[]
+
+  @@index([asOfDate])
+  @@index([isActive])
+}
+
+model ChurchStatisticMetric {
+  id         String   @id @default(cuid())
+  snapshotId String
+  category   String
+  label      String
+  value      Int
+  unit       String?
+  sortOrder  Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  snapshot ChurchStatisticSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict)
+
+  @@index([snapshotId, sortOrder])
+  @@index([isActive])
+}
