@@ -1,30 +1,29 @@
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, Users } from "lucide-react"
 import Link from "next/link"
 
 import { GoogleDriveImage } from "@/components/media/google-drive-image"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChurchPastorCreateForm } from "@/features/church-pastors/components/church-pastor-create-form"
+import { ChurchCouncilMemberCreateForm } from "@/features/church-councils/components/church-council-member-create-form"
+import { DeleteChurchCouncilMemberButton } from "@/features/church-councils/components/delete-church-council-member-button"
+import { ReorderChurchCouncilMemberButtons } from "@/features/church-councils/components/reorder-church-council-member-buttons"
+import { ToggleChurchCouncilMemberStatus } from "@/features/church-councils/components/toggle-church-council-member-status"
+import { isCurrentChurchCouncilMemberPeriod } from "@/features/church-councils/lib/church-council-member-period"
 
-import { isCurrentChurchPastorPeriod } from "../lib/church-pastor-period"
-import { DeleteChurchPastorButton } from "./delete-church-pastor-button"
-import { ToggleChurchPastorStatus } from "./toggle-church-pastor-status"
-
-type ChurchPastorListItem = {
+type ChurchCouncilMemberListItem = {
   id: string
   fullName: string
-  slug: string
+  position: string
   periodStart: Date
   periodEnd: Date | null
-  summary: string | null
-  biography: string | null
   photoUrl: string | null
+  sortOrder: number
   isActive: boolean
 }
 
-type ChurchPastorListProps = {
-  pastors: ChurchPastorListItem[]
+type ChurchCouncilMemberManagerProps = {
+  members: ChurchCouncilMemberListItem[]
 }
 
 const dateFormatter = new Intl.DateTimeFormat("id-ID", {
@@ -42,14 +41,14 @@ function formatPeriod(periodStart: Date, periodEnd: Date | null) {
   return `${formatDate(periodStart)} — ${periodEnd ? formatDate(periodEnd) : "Sekarang"}`
 }
 
-function ChurchPastorList({ pastors }: ChurchPastorListProps) {
-  const activeCount = pastors.filter((pastor) => pastor.isActive).length
+function ChurchCouncilMemberManager({ members }: ChurchCouncilMemberManagerProps) {
+  const currentCount = members.filter((member) =>
+    isCurrentChurchCouncilMemberPeriod(member.periodStart, member.periodEnd)
+  ).length
 
-  const inactiveCount = pastors.length - activeCount
+  const activeCount = members.filter((member) => member.isActive).length
 
-  const currentPastor = pastors.find((pastor) =>
-    isCurrentChurchPastorPeriod(pastor.periodStart, pastor.periodEnd)
-  )
+  const inactiveCount = members.length - activeCount
 
   return (
     <main className="space-y-6">
@@ -57,11 +56,11 @@ function ChurchPastorList({ pastors }: ChurchPastorListProps) {
         <p className="text-sm text-muted-foreground">Data Gereja</p>
 
         <h1 className="mt-1 font-serif text-2xl font-semibold tracking-tight md:text-3xl">
-          Pendeta
+          Majelis
         </h1>
 
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Kelola data pendeta dan riwayat periode pelayanan Pendeta GKJ Slogohimo.
+          Kelola anggota Majelis GKJ Slogohimo beserta jabatan dan periode pelayanan masing-masing.
         </p>
       </div>
 
@@ -69,24 +68,30 @@ function ChurchPastorList({ pastors }: ChurchPastorListProps) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Riwayat Pendeta
+              Total Anggota
             </CardTitle>
           </CardHeader>
 
           <CardContent>
-            <p className="text-2xl font-semibold">{pastors.length}</p>
+            <div className="flex items-center gap-2">
+              <Users className="size-5 text-muted-foreground" />
+
+              <p className="text-2xl font-semibold">{members.length}</p>
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Pendeta Saat Ini
+              Sedang Melayani
             </CardTitle>
           </CardHeader>
 
           <CardContent>
-            <p className="text-base font-semibold">{currentPastor?.fullName ?? "Belum ada"}</p>
+            <p className="text-2xl font-semibold">{currentCount}</p>
+
+            <p className="mt-1 text-xs text-muted-foreground">Berdasarkan periode pelayanan.</p>
           </CardContent>
         </Card>
 
@@ -109,11 +114,11 @@ function ChurchPastorList({ pastors }: ChurchPastorListProps) {
         <CardContent className="pt-6">
           <details>
             <summary className="cursor-pointer list-none font-medium [&::-webkit-details-marker]:hidden">
-              + Tambah Pendeta
+              + Tambah Anggota Majelis
             </summary>
 
             <div className="mt-6 border-t pt-6">
-              <ChurchPastorCreateForm />
+              <ChurchCouncilMemberCreateForm />
             </div>
           </details>
         </CardContent>
@@ -121,43 +126,48 @@ function ChurchPastorList({ pastors }: ChurchPastorListProps) {
 
       <div className="space-y-4">
         <div>
-          <h2 className="font-serif text-xl font-semibold">Riwayat Pendeta</h2>
+          <h2 className="font-serif text-xl font-semibold">Daftar Majelis</h2>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Data diurutkan berdasarkan periode pelayanan terbaru.
+            Urutan anggota dapat disesuaikan menggunakan tombol naik dan turun.
           </p>
         </div>
 
-        {pastors.length === 0 ? (
+        {members.length === 0 ? (
           <Card>
             <CardContent className="py-10 text-center">
-              <p className="text-sm font-medium">Belum ada data pendeta</p>
+              <p className="text-sm font-medium">Belum ada anggota Majelis</p>
 
               <p className="mt-1 text-sm text-muted-foreground">
-                Tambahkan pendeta menggunakan formulir di atas.
+                Tambahkan anggota Majelis menggunakan formulir di atas.
               </p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
-            {pastors.map((pastor, index) => {
-              const isCurrent = isCurrentChurchPastorPeriod(pastor.periodStart, pastor.periodEnd)
+            {members.map((member, index) => {
+              const isCurrent = isCurrentChurchCouncilMemberPeriod(
+                member.periodStart,
+                member.periodEnd
+              )
 
               return (
-                <Card key={pastor.id}>
+                <Card key={member.id}>
                   <CardHeader>
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
-                        <CardTitle className="wrap-break-word">{pastor.fullName}</CardTitle>
+                        <CardTitle className="wrap-break-word">{member.fullName}</CardTitle>
 
-                        <p className="mt-1 text-xs text-muted-foreground">/{pastor.slug}</p>
+                        <p className="mt-1 text-sm font-medium text-muted-foreground">
+                          {member.position}
+                        </p>
                       </div>
 
                       <div className="flex shrink-0 flex-col items-end gap-2">
                         {isCurrent ? <Badge variant="secondary">Saat ini</Badge> : null}
 
-                        <Badge variant={pastor.isActive ? "secondary" : "outline"}>
-                          {pastor.isActive ? "Aktif" : "Nonaktif"}
+                        <Badge variant={member.isActive ? "secondary" : "outline"}>
+                          {member.isActive ? "Aktif" : "Nonaktif"}
                         </Badge>
                       </div>
                     </div>
@@ -170,26 +180,20 @@ function ChurchPastorList({ pastors }: ChurchPastorListProps) {
                       </p>
 
                       <p className="mt-1 text-sm font-medium">
-                        {formatPeriod(pastor.periodStart, pastor.periodEnd)}
+                        {formatPeriod(member.periodStart, member.periodEnd)}
                       </p>
                     </div>
 
-                    {pastor.summary ? (
-                      <p className="text-sm text-muted-foreground">{pastor.summary}</p>
-                    ) : (
-                      <p className="text-sm text-muted-foreground italic">Belum ada ringkasan.</p>
-                    )}
-
-                    {pastor.photoUrl ? (
+                    {member.photoUrl ? (
                       <div className="flex items-center gap-2 rounded-xl border p-3">
                         <GoogleDriveImage
-                          url={pastor.photoUrl}
-                          alt={pastor.fullName}
+                          url={member.photoUrl}
+                          alt={member.fullName}
                           eager={index === 0}
                         />
 
                         <Link
-                          href={pastor.photoUrl}
+                          href={member.photoUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className={buttonVariants({
@@ -201,17 +205,26 @@ function ChurchPastorList({ pastors }: ChurchPastorListProps) {
                           Buka
                         </Link>
                       </div>
-                    ) : null}
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">Belum ada foto.</p>
+                    )}
 
                     <div className="flex flex-wrap items-center gap-2 border-t pt-4">
-                      <ToggleChurchPastorStatus
-                        id={pastor.id}
-                        name={pastor.fullName}
-                        isActive={pastor.isActive}
+                      <ReorderChurchCouncilMemberButtons
+                        id={member.id}
+                        name={member.fullName}
+                        canMoveUp={index > 0}
+                        canMoveDown={index < members.length - 1}
+                      />
+
+                      <ToggleChurchCouncilMemberStatus
+                        id={member.id}
+                        name={member.fullName}
+                        isActive={member.isActive}
                       />
 
                       <Link
-                        href={`/admin/pendeta/${pastor.id}/edit`}
+                        href={`/admin/majelis/${member.id}/edit`}
                         className={buttonVariants({
                           variant: "outline",
                           size: "sm",
@@ -220,8 +233,8 @@ function ChurchPastorList({ pastors }: ChurchPastorListProps) {
                         Edit
                       </Link>
 
-                      {!pastor.isActive ? (
-                        <DeleteChurchPastorButton id={pastor.id} name={pastor.fullName} />
+                      {!member.isActive ? (
+                        <DeleteChurchCouncilMemberButton id={member.id} name={member.fullName} />
                       ) : null}
                     </div>
                   </CardContent>
@@ -235,4 +248,4 @@ function ChurchPastorList({ pastors }: ChurchPastorListProps) {
   )
 }
 
-export { ChurchPastorList }
+export { ChurchCouncilMemberManager }

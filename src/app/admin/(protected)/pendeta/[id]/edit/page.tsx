@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 
 import { EditChurchPastorView } from "@/features/church-pastors/components/edit-church-pastor-view"
+import { isCurrentChurchPastorPeriod } from "@/features/church-pastors/lib/church-pastor-period"
 import { getChurchPastor } from "@/features/church-pastors/queries/get-church-pastor"
 
 type EditChurchPastorPageProps = {
@@ -34,6 +35,7 @@ async function EditChurchPastorPage({ params }: EditChurchPastorPageProps) {
         biography: pastor.biography,
         photoUrl: pastor.photoUrl,
         isActive: pastor.isActive,
+        isCurrent: isCurrentChurchPastorPeriod(pastor.periodStart, pastor.periodEnd),
       }}
     />
   )

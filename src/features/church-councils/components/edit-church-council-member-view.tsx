@@ -5,18 +5,17 @@ import { GoogleDriveImage } from "@/components/media/google-drive-image"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChurchPastorEditForm } from "@/features/church-pastors/components/church-pastor-edit-form"
+import { ChurchCouncilMemberEditForm } from "@/features/church-councils/components/church-council-member-edit-form"
 
-type EditChurchPastorViewProps = {
-  pastor: {
+type EditChurchCouncilMemberViewProps = {
+  member: {
     id: string
     fullName: string
-    slug: string
+    position: string
     periodStart: string
     periodEnd: string | null
-    summary: string | null
-    biography: string | null
     photoUrl: string | null
+    sortOrder: number
     isActive: boolean
     isCurrent: boolean
   }
@@ -33,12 +32,12 @@ function formatDate(value: string) {
   return dateFormatter.format(new Date(`${value}T00:00:00.000Z`))
 }
 
-function EditChurchPastorView({ pastor }: EditChurchPastorViewProps) {
+function EditChurchCouncilMemberView({ member }: EditChurchCouncilMemberViewProps) {
   return (
     <main className="space-y-6">
       <div>
         <Link
-          href="/admin/pendeta"
+          href="/admin/majelis"
           className={buttonVariants({
             variant: "ghost",
             size: "sm",
@@ -48,21 +47,23 @@ function EditChurchPastorView({ pastor }: EditChurchPastorViewProps) {
           Kembali
         </Link>
 
-        <p className="mt-4 text-sm text-muted-foreground">Pendeta</p>
+        <p className="mt-4 text-sm text-muted-foreground">Majelis</p>
 
         <div className="mt-1 flex flex-wrap items-center gap-3">
           <h1 className="font-serif text-2xl font-semibold tracking-tight md:text-3xl">
-            Edit Pendeta
+            Edit Anggota Majelis
           </h1>
 
-          <Badge variant={pastor.isActive ? "secondary" : "outline"}>
-            {pastor.isActive ? "Aktif" : "Nonaktif"}
-          </Badge>
+          {member.isCurrent ? <Badge variant="secondary">Saat ini</Badge> : null}
 
-          {pastor.isCurrent ? <Badge variant="secondary">Saat ini</Badge> : null}
+          <Badge variant={member.isActive ? "secondary" : "outline"}>
+            {member.isActive ? "Aktif" : "Nonaktif"}
+          </Badge>
         </div>
 
-        <p className="mt-2 text-sm text-muted-foreground">{pastor.fullName}</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {member.fullName} · {member.position}
+        </p>
       </div>
 
       <Card>
@@ -71,26 +72,35 @@ function EditChurchPastorView({ pastor }: EditChurchPastorViewProps) {
         </CardHeader>
 
         <CardContent>
-          {pastor.photoUrl ? (
+          {member.photoUrl ? (
             <GoogleDriveImage
-              url={pastor.photoUrl}
-              alt={pastor.fullName}
+              url={member.photoUrl}
+              alt={member.fullName}
               className="max-w-2xl"
               eager
             />
           ) : (
-            <p className="text-sm text-muted-foreground">Belum ada foto pendeta.</p>
+            <p className="text-sm text-muted-foreground">Belum ada foto anggota Majelis.</p>
           )}
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Informasi Pendeta</CardTitle>
+          <CardTitle>Informasi Anggota</CardTitle>
         </CardHeader>
 
         <CardContent>
-          <ChurchPastorEditForm pastor={pastor} />
+          <ChurchCouncilMemberEditForm
+            member={{
+              id: member.id,
+              fullName: member.fullName,
+              position: member.position,
+              periodStart: member.periodStart,
+              periodEnd: member.periodEnd,
+              photoUrl: member.photoUrl,
+            }}
+          />
         </CardContent>
       </Card>
 
@@ -101,33 +111,33 @@ function EditChurchPastorView({ pastor }: EditChurchPastorViewProps) {
 
         <CardContent className="grid gap-5 text-sm sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="text-muted-foreground">Slug</p>
+            <p className="text-muted-foreground">Jabatan</p>
 
-            <p className="mt-1 font-medium break-all">/{pastor.slug}</p>
+            <p className="mt-1 font-medium">{member.position}</p>
           </div>
 
           <div>
             <p className="text-muted-foreground">Status</p>
 
-            <p className="mt-1 font-medium">{pastor.isActive ? "Aktif" : "Nonaktif"}</p>
+            <p className="mt-1 font-medium">{member.isActive ? "Aktif" : "Nonaktif"}</p>
           </div>
 
           <div>
             <p className="text-muted-foreground">Periode Pelayanan</p>
 
             <p className="mt-1 font-medium">
-              {formatDate(pastor.periodStart)}
+              {formatDate(member.periodStart)}
               {" — "}
-              {pastor.periodEnd ? formatDate(pastor.periodEnd) : "Sekarang"}
+              {member.periodEnd ? formatDate(member.periodEnd) : "Sekarang"}
             </p>
           </div>
 
           <div>
             <p className="text-muted-foreground">Foto</p>
 
-            {pastor.photoUrl ? (
+            {member.photoUrl ? (
               <Link
-                href={pastor.photoUrl}
+                href={member.photoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-1 inline-flex items-center gap-1 font-medium underline-offset-4 hover:underline"
@@ -145,4 +155,4 @@ function EditChurchPastorView({ pastor }: EditChurchPastorViewProps) {
   )
 }
 
-export { EditChurchPastorView }
+export { EditChurchCouncilMemberView }
