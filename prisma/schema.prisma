@@ -167,3 +167,21 @@ model ChurchMinistry {
   @@index([sortOrder])
   @@index([isActive])
 }
+
+model ChurchPastor {
+  id          String    @id @default(cuid())
+  fullName    String
+  slug        String    @unique
+  periodStart DateTime  @db.Date
+  periodEnd   DateTime? @db.Date
+  summary     String?
+  biography   String?
+  photoUrl    String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([periodStart])
+  @@index([periodEnd])
+  @@index([isActive])
+}
