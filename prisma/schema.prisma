@@ -236,3 +236,42 @@ model ChurchStatisticMetric {
   @@index([snapshotId, sortOrder])
   @@index([isActive])
 }
+
+model GalleryAlbum {
+  id             String    @id @default(cuid())
+  title          String
+  slug           String    @unique
+  description    String?
+  eventDate      DateTime? @db.Date
+  coverImageUrl  String?
+  googleDriveUrl String?
+  sortOrder      Int       @default(0)
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  images GalleryImage[]
+
+  @@index([sortOrder])
+  @@index([isActive])
+  @@index([eventDate])
+}
+
+model GalleryImage {
+  id        String   @id @default(cuid())
+  albumId   String
+  imageUrl  String
+  caption   String?
+  altText   String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  album GalleryAlbum @relation(fields: [albumId], references: [id], onDelete: Restrict)
+
+  @@unique([albumId, imageUrl])
+  @@index([albumId, sortOrder])
+  @@index([albumId, isActive, sortOrder])
+  @@index([isActive])
+}

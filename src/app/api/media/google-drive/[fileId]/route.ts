@@ -20,17 +20,29 @@ function createErrorResponse(message: string, status: number): Response {
   )
 }
 
-export async function GET(_request: Request, { params }: GoogleDriveMediaRouteProps) {
+export async function GET(request: Request, { params }: GoogleDriveMediaRouteProps) {
   const { fileId } = await params
 
   if (!isValidGoogleDriveFileId(fileId)) {
     return createErrorResponse("Google Drive file ID tidak valid.", 400)
   }
 
+  const requestUrl = new URL(request.url)
+
+  const resourceKey = requestUrl.searchParams.get("resourceKey")?.trim()
+
+  if (resourceKey && resourceKey.length > 500) {
+    return createErrorResponse("Google Drive resource key tidak valid.", 400)
+  }
+
   const upstreamUrl = new URL("https://drive.google.com/thumbnail")
 
   upstreamUrl.searchParams.set("id", fileId)
   upstreamUrl.searchParams.set("sz", "w2000")
+
+  if (resourceKey) {
+    upstreamUrl.searchParams.set("resourcekey", resourceKey)
+  }
 
   try {
     const upstreamResponse = await fetch(upstreamUrl, {
