@@ -121,7 +121,7 @@ const adminNavigationGroups: AdminNavigationGroup[] = [
     label: "Layanan",
     items: [
       {
-        title: "Pengajuan Formulir",
+        title: "Formulir",
         href: "/admin/pengajuan",
         icon: ClipboardList,
         permission: "submissions.manage",

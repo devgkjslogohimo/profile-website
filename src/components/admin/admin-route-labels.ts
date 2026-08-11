@@ -13,7 +13,7 @@ const adminRouteLabels: Record<string, string> = {
   majelis: "Majelis",
   statistik: "Statistik Jemaat",
   galeri: "Galeri",
-  pengajuan: "Pengajuan Formulir",
+  pengajuan: "Formulir",
   pengguna: "Pengguna",
   pengaturan: "Pengaturan",
 }
