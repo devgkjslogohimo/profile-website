@@ -289,3 +289,22 @@ model ChurchForm {
   @@index([sortOrder])
   @@index([isActive])
 }
+
+model WebsiteSetting {
+  id String @id @default("main")
+
+  siteName    String
+  tagline     String?
+  description String?
+
+  email    String?
+  phone    String?
+  whatsapp String?
+
+  facebookUrl  String?
+  instagramUrl String?
+  youtubeUrl   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
