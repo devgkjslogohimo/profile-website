@@ -1,35 +1,20 @@
 "use client"
 
+import { zodResolver } from "@hookform/resolvers/zod"
 import Link from "next/link"
-import { useActionState, useEffect, useState } from "react"
+import { startTransition, useActionState, useEffect } from "react"
+import { useForm } from "react-hook-form"
 
 import { Button, buttonVariants } from "@/components/ui/button"
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { toast } from "@/components/ui/toast"
 import { updateBibleStudySchedule } from "@/features/bible-study-schedules/actions/update-bible-study-schedule"
-import {
-  type BibleStudyScheduleActionState,
-  initialBibleStudyScheduleActionState,
-} from "@/features/bible-study-schedules/lib/action-state"
+import { BibleStudyScheduleFormFields } from "@/features/bible-study-schedules/components/bible-study-schedule-form-fields"
+import { initialBibleStudyScheduleActionState } from "@/features/bible-study-schedules/lib/action-state"
 import type { BibleStudyDayOfWeek } from "@/features/bible-study-schedules/lib/day-of-week"
-
-const dayOptions = [
-  { value: "MONDAY", label: "Senin" },
-  { value: "TUESDAY", label: "Selasa" },
-  { value: "WEDNESDAY", label: "Rabu" },
-  { value: "THURSDAY", label: "Kamis" },
-  { value: "FRIDAY", label: "Jumat" },
-  { value: "SATURDAY", label: "Sabtu" },
-  { value: "SUNDAY", label: "Minggu" },
-] as const
+import {
+  type BibleStudyScheduleFormInput,
+  bibleStudyScheduleFormSchema,
+} from "@/features/bible-study-schedules/schemas/bible-study-schedule-schema"
 
 type UpdateBibleStudyScheduleFormProps = {
   schedule: {
@@ -43,162 +28,40 @@ type UpdateBibleStudyScheduleFormProps = {
   }
 }
 
-type UpdateBibleStudyScheduleFieldsProps = {
-  schedule: UpdateBibleStudyScheduleFormProps["schedule"]
-  formAction: (formData: FormData) => void
-  pending: boolean
-  fieldErrors: BibleStudyScheduleActionState["fieldErrors"]
-}
+function createFormData(values: BibleStudyScheduleFormInput) {
+  const formData = new FormData()
 
-function UpdateBibleStudyScheduleFields({
-  schedule,
-  formAction,
-  pending,
-  fieldErrors,
-}: UpdateBibleStudyScheduleFieldsProps) {
-  const [dayOfWeek, setDayOfWeek] = useState(schedule.dayOfWeek)
+  formData.set("groupName", values.groupName)
+  formData.set("dayOfWeek", values.dayOfWeek)
+  formData.set("startTime", values.startTime)
+  formData.set("location", values.location)
+  formData.set("leaderName", values.leaderName)
+  formData.set("notes", values.notes)
 
-  function handleDayChange(value: string | null) {
-    if (
-      value === "MONDAY" ||
-      value === "TUESDAY" ||
-      value === "WEDNESDAY" ||
-      value === "THURSDAY" ||
-      value === "FRIDAY" ||
-      value === "SATURDAY" ||
-      value === "SUNDAY"
-    ) {
-      setDayOfWeek(value)
-    }
-  }
-
-  return (
-    <form action={formAction} className="space-y-6">
-      <FieldGroup>
-        <Field>
-          <FieldLabel htmlFor="groupName">Nama kelompok</FieldLabel>
-
-          <Input
-            id="groupName"
-            name="groupName"
-            defaultValue={schedule.groupName}
-            disabled={pending}
-            aria-invalid={Boolean(fieldErrors.groupName)}
-          />
-
-          <FieldError errors={fieldErrors.groupName?.map((message) => ({ message }))} />
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="dayOfWeek">Hari</FieldLabel>
-
-          <Select
-            name="dayOfWeek"
-            value={dayOfWeek}
-            onValueChange={handleDayChange}
-            disabled={pending}
-            items={dayOptions}
-          >
-            <SelectTrigger id="dayOfWeek" aria-invalid={Boolean(fieldErrors.dayOfWeek)}>
-              <SelectValue placeholder="Pilih hari" />
-            </SelectTrigger>
-
-            <SelectContent>
-              {dayOptions.map((day) => (
-                <SelectItem key={day.value} value={day.value}>
-                  {day.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <FieldError errors={fieldErrors.dayOfWeek?.map((message) => ({ message }))} />
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="startTime">Jam mulai</FieldLabel>
-
-          <Input
-            id="startTime"
-            name="startTime"
-            type="time"
-            defaultValue={schedule.startTime}
-            disabled={pending}
-            aria-invalid={Boolean(fieldErrors.startTime)}
-          />
-
-          <FieldDescription>Jam menggunakan waktu WIB.</FieldDescription>
-
-          <FieldError errors={fieldErrors.startTime?.map((message) => ({ message }))} />
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="location">Lokasi</FieldLabel>
-
-          <Input
-            id="location"
-            name="location"
-            defaultValue={schedule.location ?? ""}
-            disabled={pending}
-            aria-invalid={Boolean(fieldErrors.location)}
-          />
-
-          <FieldDescription>
-            Opsional. Bisa berupa rumah jemaat atau lokasi lainnya.
-          </FieldDescription>
-
-          <FieldError errors={fieldErrors.location?.map((message) => ({ message }))} />
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="leaderName">Pemimpin PA</FieldLabel>
-
-          <Input
-            id="leaderName"
-            name="leaderName"
-            defaultValue={schedule.leaderName ?? ""}
-            disabled={pending}
-            aria-invalid={Boolean(fieldErrors.leaderName)}
-          />
-
-          <FieldError errors={fieldErrors.leaderName?.map((message) => ({ message }))} />
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="notes">Catatan</FieldLabel>
-
-          <Input
-            id="notes"
-            name="notes"
-            defaultValue={schedule.notes ?? ""}
-            disabled={pending}
-            aria-invalid={Boolean(fieldErrors.notes)}
-          />
-
-          <FieldError errors={fieldErrors.notes?.map((message) => ({ message }))} />
-        </Field>
-      </FieldGroup>
-
-      <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={pending}>
-          {pending ? "Menyimpan..." : "Simpan Perubahan"}
-        </Button>
-
-        <Link href="/admin/jadwal-pa" className={buttonVariants({ variant: "outline" })}>
-          Batal
-        </Link>
-      </div>
-    </form>
-  )
+  return formData
 }
 
 function UpdateBibleStudyScheduleForm({ schedule }: UpdateBibleStudyScheduleFormProps) {
+  const form = useForm<BibleStudyScheduleFormInput>({
+    resolver: zodResolver(bibleStudyScheduleFormSchema),
+    defaultValues: {
+      groupName: schedule.groupName,
+      dayOfWeek: schedule.dayOfWeek,
+      startTime: schedule.startTime,
+      location: schedule.location ?? "",
+      leaderName: schedule.leaderName ?? "",
+      notes: schedule.notes ?? "",
+    },
+  })
+
   const updateAction = updateBibleStudySchedule.bind(null, schedule.id)
 
-  const [state, formAction, pending] = useActionState(
+  const [state, dispatchAction, pending] = useActionState(
     updateAction,
     initialBibleStudyScheduleActionState
   )
+
+  const { clearErrors, handleSubmit, setError } = form
 
   useEffect(() => {
     if (state.status === "success") {
@@ -207,24 +70,67 @@ function UpdateBibleStudyScheduleForm({ schedule }: UpdateBibleStudyScheduleForm
         description: state.message,
         type: "success",
       })
+
+      return
     }
 
-    if (state.status === "error" && Object.keys(state.fieldErrors).length === 0) {
+    if (state.status !== "error") {
+      return
+    }
+
+    const serverFieldErrors = Object.entries(state.fieldErrors)
+
+    if (serverFieldErrors.length === 0) {
       toast.add({
         title: "Gagal",
         description: state.message,
         type: "error",
       })
+
+      return
     }
-  }, [state])
+
+    for (const [field, messages] of serverFieldErrors) {
+      const message = messages?.[0]
+
+      if (!message) {
+        continue
+      }
+
+      setError(field as keyof BibleStudyScheduleFormInput, {
+        type: "server",
+        message,
+      })
+    }
+  }, [setError, state])
+
+  const onSubmit = handleSubmit((values) => {
+    clearErrors()
+
+    startTransition(() => {
+      dispatchAction(createFormData(values))
+    })
+  })
 
   return (
-    <UpdateBibleStudyScheduleFields
-      schedule={schedule}
-      formAction={formAction}
-      pending={pending}
-      fieldErrors={state.fieldErrors}
-    />
+    <form onSubmit={onSubmit} noValidate className="space-y-6">
+      <BibleStudyScheduleFormFields form={form} pending={pending} />
+
+      <div className="flex flex-wrap gap-3">
+        <Button type="submit" disabled={pending}>
+          {pending ? "Menyimpan..." : "Simpan Perubahan"}
+        </Button>
+
+        <Link
+          href="/admin/jadwal-pa"
+          className={buttonVariants({
+            variant: "outline",
+          })}
+        >
+          Batal
+        </Link>
+      </div>
+    </form>
   )
 }
 

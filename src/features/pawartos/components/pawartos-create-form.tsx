@@ -2,48 +2,45 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { startTransition, useActionState, useEffect } from "react"
-import { type DefaultValues, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/toast"
-import { createBibleStudySchedule } from "@/features/bible-study-schedules/actions/create-bible-study-schedule"
-import { BibleStudyScheduleFormFields } from "@/features/bible-study-schedules/components/bible-study-schedule-form-fields"
-import { initialBibleStudyScheduleActionState } from "@/features/bible-study-schedules/lib/action-state"
+import { createPawartos } from "@/features/pawartos/actions/create-pawartos"
+import { PawartosFormFields } from "@/features/pawartos/components/pawartos-form-fields"
+import { initialPawartosActionState } from "@/features/pawartos/lib/pawartos-action-state"
 import {
-  type BibleStudyScheduleFormInput,
-  bibleStudyScheduleFormSchema,
-} from "@/features/bible-study-schedules/schemas/bible-study-schedule-schema"
+  type PawartosFormInput,
+  pawartosFormSchema,
+} from "@/features/pawartos/schemas/pawartos-schema"
 
-const defaultValues: DefaultValues<BibleStudyScheduleFormInput> = {
-  groupName: "",
-  startTime: "",
-  location: "",
-  leaderName: "",
-  notes: "",
+const defaultValues: PawartosFormInput = {
+  title: "",
+  publicationDate: "",
+  description: "",
+  googleDriveUrl: "",
 }
 
-function createFormData(values: BibleStudyScheduleFormInput) {
+function createFormData(values: PawartosFormInput) {
   const formData = new FormData()
 
-  formData.set("groupName", values.groupName)
-  formData.set("dayOfWeek", values.dayOfWeek)
-  formData.set("startTime", values.startTime)
-  formData.set("location", values.location)
-  formData.set("leaderName", values.leaderName)
-  formData.set("notes", values.notes)
+  formData.set("title", values.title)
+  formData.set("publicationDate", values.publicationDate)
+  formData.set("description", values.description)
+  formData.set("googleDriveUrl", values.googleDriveUrl)
 
   return formData
 }
 
-function CreateBibleStudyScheduleForm() {
-  const form = useForm<BibleStudyScheduleFormInput>({
-    resolver: zodResolver(bibleStudyScheduleFormSchema),
+function PawartosCreateForm() {
+  const form = useForm<PawartosFormInput>({
+    resolver: zodResolver(pawartosFormSchema),
     defaultValues,
   })
 
   const [state, dispatchAction, pending] = useActionState(
-    createBibleStudySchedule,
-    initialBibleStudyScheduleActionState
+    createPawartos,
+    initialPawartosActionState
   )
 
   const { clearErrors, handleSubmit, reset, setError } = form
@@ -84,7 +81,7 @@ function CreateBibleStudyScheduleForm() {
         continue
       }
 
-      setError(field as keyof BibleStudyScheduleFormInput, {
+      setError(field as keyof PawartosFormInput, {
         type: "server",
         message,
       })
@@ -101,13 +98,13 @@ function CreateBibleStudyScheduleForm() {
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-6">
-      <BibleStudyScheduleFormFields form={form} pending={pending} />
+      <PawartosFormFields form={form} pending={pending} />
 
       <Button type="submit" disabled={pending}>
-        {pending ? "Menyimpan..." : "Tambah Jadwal PA"}
+        {pending ? "Menyimpan..." : "Tambah Pawartos"}
       </Button>
     </form>
   )
 }
 
-export { CreateBibleStudyScheduleForm }
+export { PawartosCreateForm }

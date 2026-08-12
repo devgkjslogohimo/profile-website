@@ -95,10 +95,29 @@ function getGoogleDriveMediaUrl(value: string): string | null {
   return `${url.pathname}${url.search}`
 }
 
+function getGoogleDrivePdfPreviewUrl(value: string): string | null {
+  const reference = getGoogleDriveFileReference(value)
+
+  if (!reference) {
+    return null
+  }
+
+  const url = new URL(
+    `https://drive.google.com/file/d/${encodeURIComponent(reference.fileId)}/preview`
+  )
+
+  if (reference.resourceKey) {
+    url.searchParams.set("resourcekey", reference.resourceKey)
+  }
+
+  return url.toString()
+}
+
 export {
   getGoogleDriveFileId,
   getGoogleDriveFileReference,
   getGoogleDriveMediaUrl,
+  getGoogleDrivePdfPreviewUrl,
   isGoogleDriveUrl,
   isValidGoogleDriveFileId,
   normalizeGoogleDriveUrl,
