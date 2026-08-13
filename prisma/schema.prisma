@@ -56,19 +56,51 @@ enum ChurchLocationType {
 }
 
 model ChurchLocation {
-  id              String             @id @default(cuid())
-  name            String
-  slug            String             @unique
-  googleMapsUrl   String?
-  type            ChurchLocationType
-  sortOrder       Int                @default(0)
-  isActive        Boolean            @default(true)
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
+  id            String             @id @default(cuid())
+  name          String
+  slug          String             @unique
+  googleMapsUrl String?
+  type          ChurchLocationType
+
+  coverImageUrl    String?
+  coverImageFileId String?
+  coverAltText     String?
+
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   worshipServices WorshipService[]
+  images          ChurchLocationImage[]
 
   @@index([type])
   @@index([isActive, sortOrder])
+}
+
+model ChurchLocationImage {
+  id String @id @default(cuid())
+
+  churchLocationId String
+
+  imageUrl    String
+  imageFileId String
+
+  caption String?
+  altText String
+
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  churchLocation ChurchLocation @relation(fields: [churchLocationId], references: [id], onDelete: Restrict)
+
+  @@unique([churchLocationId, imageFileId])
+  @@index([churchLocationId, sortOrder])
+  @@index([churchLocationId, isActive, sortOrder])
 }
 
 model WorshipServiceRole {
@@ -481,4 +513,19 @@ model SitePage {
   @@index([status, publishedAt])
   @@index([showInNavigation, navigationOrder])
   @@index([authorId])
+}
+
+model HeroSlide {
+  id String @id @default(cuid())
+
+  slot        Int     @unique
+  imageUrl    String
+  imageFileId String  @unique
+  altText     String
+  isActive    Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, slot])
 }

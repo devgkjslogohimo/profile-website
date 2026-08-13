@@ -6,14 +6,19 @@ import { HomeNewsSection } from "@/features/public-site/components/home-news-sec
 import { HomeQuickLinks } from "@/features/public-site/components/home-quick-links"
 import { HomeWorshipSection } from "@/features/public-site/components/home-worship-section"
 import { getHomepageData } from "@/features/public-site/queries/get-homepage-data"
+import { getPublicHeroSlides } from "@/features/public-site/queries/get-public-hero-slides"
 import { getPublicSiteSettings } from "@/features/public-site/queries/get-public-site-settings"
 
 async function PublicHomePage() {
-  const [settings, homepageData] = await Promise.all([getPublicSiteSettings(), getHomepageData()])
+  const [settings, homepageData, heroSlides] = await Promise.all([
+    getPublicSiteSettings(),
+    getHomepageData(),
+    getPublicHeroSlides(),
+  ])
 
   return (
     <main>
-      <HomeHero settings={settings} />
+      <HomeHero settings={settings} slides={heroSlides} />
 
       <HomeQuickLinks />
 

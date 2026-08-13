@@ -1,8 +1,10 @@
+import { HeroSlideSettings } from "@/features/hero-slides/components/hero-slide-settings"
+import { getHeroSlides } from "@/features/hero-slides/queries/get-hero-slides"
 import { WebsiteSettingForm } from "@/features/website-settings/components/website-setting-form"
 import { getWebsiteSetting } from "@/features/website-settings/queries/get-website-setting"
 
 async function WebsiteSettingPage() {
-  const setting = await getWebsiteSetting()
+  const [setting, heroSlides] = await Promise.all([getWebsiteSetting(), getHeroSlides()])
 
   return (
     <main className="space-y-6">
@@ -14,7 +16,8 @@ async function WebsiteSettingPage() {
         </h1>
 
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Kelola identitas, informasi kontak, dan media sosial yang digunakan pada website.
+          Kelola identitas, informasi kontak, media sosial, dan foto Hero yang digunakan pada
+          website.
         </p>
       </div>
 
@@ -35,6 +38,8 @@ async function WebsiteSettingPage() {
             : null
         }
       />
+
+      <HeroSlideSettings slides={heroSlides} />
 
       <p className="text-xs text-muted-foreground">
         Logo dan favicon tidak dikelola dari halaman ini karena menggunakan file statis di dalam
