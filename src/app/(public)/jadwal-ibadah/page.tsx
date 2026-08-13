@@ -7,6 +7,10 @@ import { Section } from "@/components/shared/section"
 import { Card, CardContent } from "@/components/ui/card"
 import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getPublishedWorshipSchedules } from "@/features/public-site/queries/get-public-content"
+import {
+  getWorshipLanguageLabel,
+  resolveWorshipLanguage,
+} from "@/features/worship-schedules/lib/worship-language"
 
 async function generateMetadata() {
   return createPublicPageMetadata({
@@ -72,6 +76,12 @@ async function PublicWorshipSchedulePage() {
                             <p className="flex items-center gap-2">
                               <FiClock className="size-4 shrink-0 text-primary" />
                               {timeFormatter.format(service.startsAt).replace(".", ":")} WIB
+                            </p>
+
+                            <p className="font-medium text-foreground">
+                              {getWorshipLanguageLabel(
+                                resolveWorshipLanguage(schedule.date, service.languageOverride)
+                              )}
                             </p>
 
                             <p className="flex items-start gap-2">

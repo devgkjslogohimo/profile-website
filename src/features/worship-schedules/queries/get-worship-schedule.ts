@@ -20,6 +20,7 @@ async function getWorshipSchedule(id: string) {
           id: true,
           name: true,
           startsAt: true,
+          languageOverride: true,
           sortOrder: true,
           churchLocationId: true,
           churchLocation: {

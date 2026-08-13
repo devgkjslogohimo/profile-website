@@ -125,15 +125,21 @@ model WorshipSchedule {
   services WorshipService[]
 }
 
+enum WorshipLanguage {
+  JAVANESE
+  INDONESIAN
+}
+
 model WorshipService {
-  id                String   @id @default(cuid())
+  id                String           @id @default(cuid())
   worshipScheduleId String
   churchLocationId  String
   name              String
   startsAt          DateTime
-  sortOrder         Int      @default(0)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  languageOverride  WorshipLanguage?
+  sortOrder         Int              @default(0)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 
   worshipSchedule WorshipSchedule @relation(fields: [worshipScheduleId], references: [id], onDelete: Cascade)
 

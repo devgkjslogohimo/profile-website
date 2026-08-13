@@ -24,6 +24,7 @@ const getPublishedWorshipSchedules = cache(async () => {
           id: true,
           name: true,
           startsAt: true,
+          languageOverride: true,
           sortOrder: true,
 
           churchLocation: {

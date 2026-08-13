@@ -13,6 +13,7 @@ import {
   churchLocationSlugSchema,
 } from "@/features/church-locations/schemas/church-location-schema"
 import { prisma } from "@/lib/db/prisma"
+import { createMediaAltText } from "@/lib/media-alt-text"
 
 function getFieldErrors(
   issues: Array<{ path: PropertyKey[]; message: string }>
@@ -43,8 +44,20 @@ async function updateChurchLocation(
   await requirePermission("church.manage")
 
   const existingLocation = await prisma.churchLocation.findUnique({
-    where: { id },
-    select: { id: true },
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      coverImageUrl: true,
+
+      images: {
+        select: {
+          id: true,
+          caption: true,
+        },
+      },
+    },
   })
 
   if (!existingLocation) {
@@ -109,17 +122,40 @@ async function updateChurchLocation(
   }
 
   try {
-    await prisma.churchLocation.update({
-      where: {
-        id,
-      },
-      data: {
-        name: parsed.data.name,
-        slug,
-        type: parsed.data.type,
-        googleMapsUrl: parsed.data.googleMapsUrl || null,
-      },
-    })
+    await prisma.$transaction([
+      prisma.churchLocation.update({
+        where: {
+          id,
+        },
+        data: {
+          name: parsed.data.name,
+          slug,
+          type: parsed.data.type,
+          googleMapsUrl: parsed.data.googleMapsUrl || null,
+
+          coverAltText: existingLocation.coverImageUrl
+            ? createMediaAltText({
+                subjectName: parsed.data.name,
+                variant: "cover",
+              })
+            : null,
+        },
+      }),
+
+      ...existingLocation.images.map((image) =>
+        prisma.churchLocationImage.update({
+          where: {
+            id: image.id,
+          },
+          data: {
+            altText: createMediaAltText({
+              subjectName: parsed.data.name,
+              caption: image.caption,
+            }),
+          },
+        })
+      ),
+    ])
   } catch (error) {
     console.error("UPDATE CHURCH LOCATION FAILED", error)
 

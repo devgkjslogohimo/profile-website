@@ -26,7 +26,32 @@ const getHomepageData = cache(async () => {
             id: true,
             name: true,
             startsAt: true,
+            languageOverride: true,
             sortOrder: true,
+
+            assignments: {
+              select: {
+                id: true,
+                personName: true,
+                sortOrder: true,
+
+                worshipServiceRole: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+
+              orderBy: [
+                {
+                  sortOrder: "asc",
+                },
+                {
+                  id: "asc",
+                },
+              ],
+            },
 
             churchLocation: {
               select: {
@@ -35,6 +60,9 @@ const getHomepageData = cache(async () => {
                 slug: true,
                 type: true,
                 googleMapsUrl: true,
+
+                coverImageUrl: true,
+                coverAltText: true,
               },
             },
           },

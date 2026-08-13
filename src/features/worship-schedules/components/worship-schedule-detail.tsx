@@ -21,6 +21,12 @@ import {
   getScheduleDateInputValue,
 } from "@/features/worship-schedules/lib/format"
 
+import {
+  getDefaultWorshipLanguage,
+  getWorshipLanguageLabel,
+  resolveWorshipLanguage,
+  WorshipLanguage,
+} from "../lib/worship-language"
 import { DuplicateScheduleButton } from "./duplicate-schedule-button"
 
 type ChurchLocationOption = {
@@ -46,6 +52,7 @@ type WorshipScheduleDetailProps = {
       id: string
       name: string
       startsAt: Date
+      languageOverride: WorshipLanguage | null
       sortOrder: number
       churchLocationId: string
       churchLocation: {
@@ -74,6 +81,7 @@ type WorshipScheduleDetailProps = {
 
 function WorshipScheduleDetail({ schedule, locations, roles }: WorshipScheduleDetailProps) {
   const label = formatScheduleDate(schedule.date)
+  const automaticLanguage = getDefaultWorshipLanguage(schedule.date)
 
   return (
     <main className="space-y-6">
@@ -185,7 +193,11 @@ function WorshipScheduleDetail({ schedule, locations, roles }: WorshipScheduleDe
                     </p>
                   </div>
                 ) : (
-                  <CreateServiceForm worshipScheduleId={schedule.id} locations={locations} />
+                  <CreateServiceForm
+                    worshipScheduleId={schedule.id}
+                    locations={locations}
+                    automaticLanguage={automaticLanguage}
+                  />
                 )}
               </div>
             </details>
@@ -226,6 +238,16 @@ function WorshipScheduleDetail({ schedule, locations, roles }: WorshipScheduleDe
                       ) : null}
 
                       <Badge variant="secondary">{getWibTime(service.startsAt)} WIB</Badge>
+
+                      <Badge variant="outline">
+                        {getWorshipLanguageLabel(
+                          resolveWorshipLanguage(schedule.date, service.languageOverride)
+                        )}
+                      </Badge>
+
+                      {service.languageOverride === null ? (
+                        <span className="text-xs text-muted-foreground">Otomatis</span>
+                      ) : null}
 
                       {!service.churchLocation.isActive ? (
                         <p className="mt-3 text-sm text-destructive">
@@ -364,11 +386,17 @@ function WorshipScheduleDetail({ schedule, locations, roles }: WorshipScheduleDe
                         service={{
                           id: service.id,
                           name: service.name,
+
                           churchLocationId: service.churchLocationId,
+
                           churchLocation: service.churchLocation,
+
                           startTime: getWibTime(service.startsAt),
+
+                          languageOverride: service.languageOverride,
                         }}
                         locations={locations}
+                        automaticLanguage={automaticLanguage}
                       />
                     </div>
                   </details>

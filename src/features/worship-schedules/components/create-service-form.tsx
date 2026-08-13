@@ -19,6 +19,12 @@ import {
   type WorshipServiceActionState,
 } from "@/features/worship-schedules/lib/service-action-state"
 
+import {
+  getWorshipLanguageLabel,
+  WorshipLanguage,
+  WorshipLanguageInput,
+} from "../lib/worship-language"
+
 type ChurchLocationOption = {
   id: string
   name: string
@@ -28,11 +34,13 @@ type ChurchLocationOption = {
 type CreateServiceFormProps = {
   worshipScheduleId: string
   locations: ChurchLocationOption[]
+  automaticLanguage: WorshipLanguage
   disabled?: boolean
 }
 
 type CreateServiceFieldsProps = {
   locations: ChurchLocationOption[]
+  automaticLanguage: WorshipLanguage
   formAction: (formData: FormData) => void
   pending: boolean
   disabled: boolean
@@ -41,12 +49,14 @@ type CreateServiceFieldsProps = {
 
 function CreateServiceFields({
   locations,
+  automaticLanguage,
   formAction,
   pending,
   disabled,
   fieldErrors,
 }: CreateServiceFieldsProps) {
   const [churchLocationId, setChurchLocationId] = useState("")
+  const [language, setLanguage] = useState<WorshipLanguageInput>("AUTO")
 
   function handleLocationChange(value: string | null) {
     setChurchLocationId(value ?? "")
@@ -120,6 +130,55 @@ function CreateServiceFields({
 
           <FieldError errors={fieldErrors.startTime?.map((message) => ({ message }))} />
         </Field>
+
+        <Field>
+          <FieldLabel htmlFor="language">Bahasa Ibadah</FieldLabel>
+
+          <Select
+            name="language"
+            value={language}
+            onValueChange={(value) => setLanguage((value ?? "AUTO") as WorshipLanguageInput)}
+            disabled={disabled || pending}
+            items={[
+              {
+                value: "AUTO",
+                label: `Otomatis (${getWorshipLanguageLabel(automaticLanguage)})`,
+              },
+              {
+                value: "JAVANESE",
+                label: "Bahasa Jawa",
+              },
+              {
+                value: "INDONESIAN",
+                label: "Bahasa Indonesia",
+              },
+            ]}
+          >
+            <SelectTrigger id="language" aria-invalid={Boolean(fieldErrors.language)}>
+              <SelectValue />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="AUTO">
+                Otomatis ({getWorshipLanguageLabel(automaticLanguage)})
+              </SelectItem>
+
+              <SelectItem value="JAVANESE">Bahasa Jawa</SelectItem>
+
+              <SelectItem value="INDONESIAN">Bahasa Indonesia</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <FieldDescription>
+            Otomatis mengikuti minggu ganjil/genap. Pilih bahasa manual hanya jika ada pengecualian.
+          </FieldDescription>
+
+          <FieldError
+            errors={fieldErrors.language?.map((message) => ({
+              message,
+            }))}
+          />
+        </Field>
       </FieldGroup>
 
       <Button type="submit" disabled={disabled || pending || locations.length === 0}>
@@ -132,6 +191,7 @@ function CreateServiceFields({
 function CreateServiceForm({
   worshipScheduleId,
   locations,
+  automaticLanguage,
   disabled = false,
 }: CreateServiceFormProps) {
   const createAction = createWorshipService.bind(null, worshipScheduleId)
@@ -163,6 +223,7 @@ function CreateServiceForm({
     <CreateServiceFields
       key={state.submissionId}
       locations={locations}
+      automaticLanguage={automaticLanguage}
       formAction={formAction}
       pending={pending}
       disabled={disabled}

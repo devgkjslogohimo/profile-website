@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -18,6 +18,12 @@ import {
   initialWorshipServiceActionState,
   type WorshipServiceActionState,
 } from "@/features/worship-schedules/lib/service-action-state"
+
+import {
+  getWorshipLanguageLabel,
+  WorshipLanguage,
+  WorshipLanguageInput,
+} from "../lib/worship-language"
 
 type ChurchLocationOption = {
   id: string
@@ -37,9 +43,11 @@ type UpdateServiceFormProps = {
       isActive: boolean
     }
     startTime: string
+    languageOverride: WorshipLanguage | null
   }
   locations: ChurchLocationOption[]
   disabled?: boolean
+  automaticLanguage: WorshipLanguage
 }
 
 type UpdateServiceFieldsProps = {
@@ -49,6 +57,7 @@ type UpdateServiceFieldsProps = {
   pending: boolean
   disabled: boolean
   fieldErrors: WorshipServiceActionState["fieldErrors"]
+  automaticLanguage: WorshipLanguage
 }
 
 function UpdateServiceFields({
@@ -58,8 +67,11 @@ function UpdateServiceFields({
   pending,
   disabled,
   fieldErrors,
+  automaticLanguage,
 }: UpdateServiceFieldsProps) {
   const [churchLocationId, setChurchLocationId] = useState(service.churchLocationId)
+
+  const [language, setLanguage] = useState<WorshipLanguageInput>(service.languageOverride ?? "AUTO")
 
   const locationOptions = useMemo(() => {
     if (locations.some((location) => location.id === service.churchLocation.id)) {
@@ -147,6 +159,58 @@ function UpdateServiceFields({
 
           <FieldError errors={fieldErrors.startTime?.map((message) => ({ message }))} />
         </Field>
+
+        <Field>
+          <FieldLabel htmlFor={`language-${service.id}`}>Bahasa Ibadah</FieldLabel>
+
+          <Select
+            name="language"
+            value={language}
+            onValueChange={(value) => setLanguage((value ?? "AUTO") as WorshipLanguageInput)}
+            disabled={disabled || pending}
+            items={[
+              {
+                value: "AUTO",
+                label: `Otomatis (${getWorshipLanguageLabel(automaticLanguage)})`,
+              },
+              {
+                value: "JAVANESE",
+                label: "Bahasa Jawa",
+              },
+              {
+                value: "INDONESIAN",
+                label: "Bahasa Indonesia",
+              },
+            ]}
+          >
+            <SelectTrigger
+              id={`language-${service.id}`}
+              aria-invalid={Boolean(fieldErrors.language)}
+            >
+              <SelectValue />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="AUTO">
+                Otomatis ({getWorshipLanguageLabel(automaticLanguage)})
+              </SelectItem>
+
+              <SelectItem value="JAVANESE">Bahasa Jawa</SelectItem>
+
+              <SelectItem value="INDONESIAN">Bahasa Indonesia</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <FieldDescription>
+            Mode Otomatis saat ini menghasilkan {getWorshipLanguageLabel(automaticLanguage)}.
+          </FieldDescription>
+
+          <FieldError
+            errors={fieldErrors.language?.map((message) => ({
+              message,
+            }))}
+          />
+        </Field>
       </FieldGroup>
 
       <Button type="submit" size="sm" disabled={disabled || pending}>
@@ -156,7 +220,12 @@ function UpdateServiceFields({
   )
 }
 
-function UpdateServiceForm({ service, locations, disabled = false }: UpdateServiceFormProps) {
+function UpdateServiceForm({
+  service,
+  locations,
+  disabled = false,
+  automaticLanguage,
+}: UpdateServiceFormProps) {
   const updateAction = updateWorshipService.bind(null, service.id)
 
   const [state, formAction, pending] = useActionState(
@@ -190,6 +259,7 @@ function UpdateServiceForm({ service, locations, disabled = false }: UpdateServi
       pending={pending}
       disabled={disabled}
       fieldErrors={state.fieldErrors}
+      automaticLanguage={automaticLanguage}
     />
   )
 }

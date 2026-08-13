@@ -54,7 +54,7 @@ async function duplicateWorshipSchedule(
           churchLocationId: true,
           startsAt: true,
           sortOrder: true,
-
+          languageOverride: true,
           assignments: {
             select: {
               worshipServiceRoleId: true,

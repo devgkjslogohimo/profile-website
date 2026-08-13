@@ -5,6 +5,8 @@ import { notFound } from "next/navigation"
 import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { requirePermission } from "@/dal/auth"
+import { LocationCoverForm } from "@/features/church-locations/components/location-cover-form"
+import { LocationImageManager } from "@/features/church-locations/components/location-image-manager"
 import { UpdateLocationForm } from "@/features/church-locations/components/update-location-form"
 import { prisma } from "@/lib/db/prisma"
 
@@ -29,6 +31,30 @@ export default async function EditChurchLocationPage({
       type: true,
       sortOrder: true,
       isActive: true,
+      coverImageUrl: true,
+      coverImageFileId: true,
+      coverAltText: true,
+
+      images: {
+        select: {
+          id: true,
+          imageUrl: true,
+          imageFileId: true,
+          caption: true,
+          altText: true,
+          sortOrder: true,
+          isActive: true,
+        },
+
+        orderBy: [
+          {
+            sortOrder: "asc",
+          },
+          {
+            createdAt: "asc",
+          },
+        ],
+      },
     },
   })
 
@@ -72,6 +98,49 @@ export default async function EditChurchLocationPage({
               type: location.type,
               googleMapsUrl: location.googleMapsUrl,
             }}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Cover Lokasi</CardTitle>
+
+          <p className="text-sm text-muted-foreground">
+            Foto utama lokasi. Cover ini nantinya digunakan pada homepage Jadwal Ibadah dan halaman
+            detail lokasi.
+          </p>
+        </CardHeader>
+
+        <CardContent>
+          <LocationCoverForm
+            location={{
+              id: location.id,
+              name: location.name,
+              coverImageUrl: location.coverImageUrl,
+              coverAltText: location.coverAltText,
+            }}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Koleksi Foto Lokasi</CardTitle>
+
+          <p className="text-sm text-muted-foreground">
+            Kelola foto yang menunjukkan kondisi bangunan, ruang ibadah, halaman, parkir, fasilitas,
+            dan bagian lain dari lokasi ini.
+          </p>
+        </CardHeader>
+
+        <CardContent>
+          <LocationImageManager
+            location={{
+              id: location.id,
+              name: location.name,
+            }}
+            images={location.images}
           />
         </CardContent>
       </Card>

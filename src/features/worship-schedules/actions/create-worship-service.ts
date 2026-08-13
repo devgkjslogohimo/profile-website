@@ -20,7 +20,12 @@ function getFieldErrors(
   for (const issue of issues) {
     const field = issue.path[0]
 
-    if (field !== "name" && field !== "churchLocationId" && field !== "startTime") {
+    if (
+      field !== "name" &&
+      field !== "churchLocationId" &&
+      field !== "startTime" &&
+      field !== "language"
+    ) {
       continue
     }
 
@@ -42,8 +47,12 @@ async function createWorshipService(
 
   const parsed = worshipServiceFormSchema.safeParse({
     name: String(formData.get("name") ?? ""),
+
     churchLocationId: String(formData.get("churchLocationId") ?? ""),
+
     startTime: String(formData.get("startTime") ?? ""),
+
+    language: String(formData.get("language") ?? "AUTO"),
   })
 
   if (!parsed.success) {
@@ -148,6 +157,7 @@ async function createWorshipService(
         name: parsed.data.name,
         startsAt,
         sortOrder,
+        languageOverride: parsed.data.language === "AUTO" ? null : parsed.data.language,
       },
     })
   } catch (error) {

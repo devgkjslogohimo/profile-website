@@ -13,6 +13,8 @@ const worshipServiceFormSchema = z.object({
     .string()
     .trim()
     .regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/, "Pilih jam mulai ibadah yang valid."),
+
+  language: z.enum(["AUTO", "JAVANESE", "INDONESIAN"]),
 })
 
 type WorshipServiceFormInput = z.infer<typeof worshipServiceFormSchema>

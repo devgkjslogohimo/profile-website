@@ -1,9 +1,12 @@
-type WorshipServiceField = "name" | "churchLocationId" | "startTime"
+type WorshipServiceField = "name" | "churchLocationId" | "startTime" | "language"
 
 type WorshipServiceActionState = {
   status: "idle" | "success" | "error"
+
   message: string
+
   fieldErrors: Partial<Record<WorshipServiceField, string[]>>
+
   submissionId: number
 }
 
@@ -15,4 +18,5 @@ const initialWorshipServiceActionState: WorshipServiceActionState = {
 }
 
 export { initialWorshipServiceActionState }
+
 export type { WorshipServiceActionState, WorshipServiceField }
