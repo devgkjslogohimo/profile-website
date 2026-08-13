@@ -45,6 +45,8 @@ const churchCouncilMemberFormSchema = z
       .min(2, "Nama anggota minimal 2 karakter.")
       .max(160, "Nama anggota maksimal 160 karakter."),
 
+    churchLocationId: z.string().trim().min(1, "Pilih lokasi pelayanan."),
+
     position: z
       .string()
       .trim()

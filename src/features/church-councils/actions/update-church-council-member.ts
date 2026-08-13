@@ -24,6 +24,8 @@ async function updateChurchCouncilMember(
     },
     select: {
       id: true,
+      churchLocationId: true,
+      sortOrder: true,
     },
   })
 
@@ -42,6 +44,7 @@ async function updateChurchCouncilMember(
     periodStart: String(formData.get("periodStart") ?? ""),
     periodEnd: String(formData.get("periodEnd") ?? ""),
     photoUrl: String(formData.get("photoUrl") ?? ""),
+    churchLocationId: String(formData.get("churchLocationId") ?? ""),
   })
 
   if (!parsed.success) {
@@ -53,6 +56,39 @@ async function updateChurchCouncilMember(
     }
   }
 
+  const churchLocation = await prisma.churchLocation.findUnique({
+    where: {
+      id: parsed.data.churchLocationId,
+    },
+
+    select: {
+      id: true,
+      name: true,
+      isActive: true,
+    },
+  })
+
+  if (!churchLocation) {
+    return {
+      status: "error",
+      message: "Periksa kembali lokasi pelayanan.",
+      fieldErrors: {
+        churchLocationId: ["Lokasi pelayanan tidak ditemukan."],
+      },
+      submissionId: previousState.submissionId,
+    }
+  }
+
+  if (!churchLocation.isActive && churchLocation.id !== existingMember.churchLocationId) {
+    return {
+      status: "error",
+      message: "Periksa kembali lokasi pelayanan.",
+      fieldErrors: {
+        churchLocationId: ["Lokasi nonaktif tidak dapat dipilih sebagai lokasi pelayanan baru."],
+      },
+      submissionId: previousState.submissionId,
+    }
+  }
   const periodStart = new Date(`${parsed.data.periodStart}T00:00:00.000Z`)
 
   const periodEnd = parsed.data.periodEnd
@@ -62,16 +98,34 @@ async function updateChurchCouncilMember(
   try {
     const photoUrl = parsed.data.photoUrl ? normalizeGoogleDriveUrl(parsed.data.photoUrl) : null
 
+    let sortOrder = existingMember.sortOrder
+
+    if (existingMember.churchLocationId !== churchLocation.id) {
+      const targetLocationOrder = await prisma.churchCouncilMember.aggregate({
+        where: {
+          churchLocationId: churchLocation.id,
+        },
+
+        _max: {
+          sortOrder: true,
+        },
+      })
+
+      sortOrder = (targetLocationOrder._max.sortOrder ?? 0) + 1
+    }
+
     await prisma.churchCouncilMember.update({
       where: {
         id,
       },
       data: {
+        churchLocationId: churchLocation.id,
         fullName: parsed.data.fullName,
         position: parsed.data.position,
         periodStart,
         periodEnd,
         photoUrl,
+        sortOrder,
       },
     })
   } catch (error) {

@@ -14,8 +14,17 @@ import {
   churchCouncilMemberFormSchema,
 } from "@/features/church-councils/schemas/church-council-member-schema"
 
+type ChurchCouncilMemberCreateFormProps = {
+  locations: {
+    id: string
+    name: string
+    type: "CHURCH" | "PEPANTHAN"
+  }[]
+}
+
 const defaultValues: ChurchCouncilMemberFormInput = {
   fullName: "",
+  churchLocationId: "",
   position: "",
   periodStart: "",
   periodEnd: "",
@@ -30,11 +39,12 @@ function createFormData(values: ChurchCouncilMemberFormInput) {
   formData.set("periodStart", values.periodStart)
   formData.set("periodEnd", values.periodEnd)
   formData.set("photoUrl", values.photoUrl)
+  formData.set("churchLocationId", values.churchLocationId)
 
   return formData
 }
 
-function ChurchCouncilMemberCreateForm() {
+function ChurchCouncilMemberCreateForm({ locations }: ChurchCouncilMemberCreateFormProps) {
   const form = useForm<ChurchCouncilMemberFormInput>({
     resolver: zodResolver(churchCouncilMemberFormSchema),
     defaultValues,
@@ -100,8 +110,7 @@ function ChurchCouncilMemberCreateForm() {
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-6">
-      <ChurchCouncilMemberFormFields form={form} pending={pending} />
-
+      <ChurchCouncilMemberFormFields form={form} pending={pending} locations={locations} />
       <Button type="submit" disabled={pending}>
         {pending ? "Menyimpan..." : "Tambah Anggota Majelis"}
       </Button>

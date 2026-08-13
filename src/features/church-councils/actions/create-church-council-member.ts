@@ -19,6 +19,7 @@ async function createChurchCouncilMember(
 
   const parsed = churchCouncilMemberFormSchema.safeParse({
     fullName: String(formData.get("fullName") ?? ""),
+    churchLocationId: String(formData.get("churchLocationId") ?? ""),
     position: String(formData.get("position") ?? ""),
     periodStart: String(formData.get("periodStart") ?? ""),
     periodEnd: String(formData.get("periodEnd") ?? ""),
@@ -34,6 +35,29 @@ async function createChurchCouncilMember(
     }
   }
 
+  const churchLocation = await prisma.churchLocation.findFirst({
+    where: {
+      id: parsed.data.churchLocationId,
+      isActive: true,
+    },
+
+    select: {
+      id: true,
+      name: true,
+    },
+  })
+
+  if (!churchLocation) {
+    return {
+      status: "error",
+      message: "Periksa kembali lokasi pelayanan.",
+      fieldErrors: {
+        churchLocationId: ["Lokasi pelayanan tidak ditemukan atau sudah nonaktif."],
+      },
+      submissionId: previousState.submissionId,
+    }
+  }
+
   const periodStart = new Date(`${parsed.data.periodStart}T00:00:00.000Z`)
 
   const periodEnd = parsed.data.periodEnd
@@ -42,6 +66,10 @@ async function createChurchCouncilMember(
 
   try {
     const lastMember = await prisma.churchCouncilMember.aggregate({
+      where: {
+        churchLocationId: churchLocation.id,
+      },
+
       _max: {
         sortOrder: true,
       },
@@ -51,6 +79,7 @@ async function createChurchCouncilMember(
 
     await prisma.churchCouncilMember.create({
       data: {
+        churchLocationId: churchLocation.id,
         fullName: parsed.data.fullName,
         position: parsed.data.position,
         periodStart,

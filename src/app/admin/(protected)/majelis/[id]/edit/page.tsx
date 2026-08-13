@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { EditChurchCouncilMemberView } from "@/features/church-councils/components/edit-church-council-member-view"
 import { isCurrentChurchCouncilMemberPeriod } from "@/features/church-councils/lib/church-council-member-period"
 import { getChurchCouncilMember } from "@/features/church-councils/queries/get-church-council-member"
+import { prisma } from "@/lib/db/prisma"
 
 type EditChurchCouncilMemberPageProps = {
   params: Promise<{
@@ -23,6 +24,35 @@ async function EditChurchCouncilMemberPage({ params }: EditChurchCouncilMemberPa
     notFound()
   }
 
+  const locations = await prisma.churchLocation.findMany({
+    where: {
+      OR: [
+        {
+          isActive: true,
+        },
+        ...(member.churchLocationId
+          ? [
+              {
+                id: member.churchLocationId,
+              },
+            ]
+          : []),
+      ],
+    },
+
+    select: {
+      id: true,
+      name: true,
+      type: true,
+      isActive: true,
+      sortOrder: true,
+    },
+
+    orderBy: {
+      sortOrder: "asc",
+    },
+  })
+
   return (
     <EditChurchCouncilMemberView
       member={{
@@ -35,7 +65,10 @@ async function EditChurchCouncilMemberPage({ params }: EditChurchCouncilMemberPa
         sortOrder: member.sortOrder,
         isActive: member.isActive,
         isCurrent: isCurrentChurchCouncilMemberPeriod(member.periodStart, member.periodEnd),
+        churchLocationId: member.churchLocationId,
+        churchLocation: member.churchLocation,
       }}
+      locations={locations}
     />
   )
 }

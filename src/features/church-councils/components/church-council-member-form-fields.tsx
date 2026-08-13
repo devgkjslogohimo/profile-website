@@ -7,10 +7,18 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/c
 import { Input } from "@/components/ui/input"
 import type { ChurchCouncilMemberFormInput } from "@/features/church-councils/schemas/church-council-member-schema"
 
+type ChurchCouncilLocationOption = {
+  id: string
+  name: string
+  type: "CHURCH" | "PEPANTHAN"
+  isActive?: boolean
+}
+
 type ChurchCouncilMemberFormFieldsProps = {
   form: UseFormReturn<ChurchCouncilMemberFormInput>
   pending: boolean
   editMode?: boolean
+  locations: ChurchCouncilLocationOption[]
 }
 
 function getFieldError(message: unknown) {
@@ -29,6 +37,7 @@ function ChurchCouncilMemberFormFields({
   form,
   pending,
   editMode = false,
+  locations,
 }: ChurchCouncilMemberFormFieldsProps) {
   const {
     register,
@@ -61,6 +70,34 @@ function ChurchCouncilMemberFormFields({
         <FieldDescription>Masukkan nama lengkap anggota Majelis.</FieldDescription>
 
         <FieldError errors={getFieldError(errors.fullName?.message)} />
+      </Field>
+
+      <Field>
+        <FieldLabel htmlFor="churchLocationId">Lokasi Pelayanan</FieldLabel>
+
+        <select
+          id="churchLocationId"
+          {...register("churchLocationId")}
+          disabled={pending}
+          aria-invalid={Boolean(errors.churchLocationId)}
+          className="flex h-10 w-full rounded-xl border bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20"
+        >
+          <option value="">Pilih lokasi pelayanan</option>
+
+          {locations.map((location) => (
+            <option key={location.id} value={location.id}>
+              {location.name}
+              {location.type === "PEPANTHAN" ? " — Pepanthan" : " — Gereja"}
+              {location.isActive === false ? " — Nonaktif" : ""}
+            </option>
+          ))}
+        </select>
+
+        <FieldDescription>
+          Pilih gereja atau Pepanthan tempat anggota Majelis melayani.
+        </FieldDescription>
+
+        <FieldError errors={getFieldError(errors.churchLocationId?.message)} />
       </Field>
 
       <Field>

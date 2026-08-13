@@ -23,13 +23,21 @@ type ChurchCouncilMemberEditFormProps = {
     periodStart: string
     periodEnd: string | null
     photoUrl: string | null
+    churchLocationId: string | null
   }
+  locations: {
+    id: string
+    name: string
+    type: "CHURCH" | "PEPANTHAN"
+    isActive?: boolean
+  }[]
 }
 
 function createFormData(values: ChurchCouncilMemberFormInput) {
   const formData = new FormData()
 
   formData.set("fullName", values.fullName)
+  formData.set("churchLocationId", values.churchLocationId)
   formData.set("position", values.position)
   formData.set("periodStart", values.periodStart)
   formData.set("periodEnd", values.periodEnd)
@@ -38,7 +46,7 @@ function createFormData(values: ChurchCouncilMemberFormInput) {
   return formData
 }
 
-function ChurchCouncilMemberEditForm({ member }: ChurchCouncilMemberEditFormProps) {
+function ChurchCouncilMemberEditForm({ member, locations }: ChurchCouncilMemberEditFormProps) {
   const form = useForm<ChurchCouncilMemberFormInput>({
     resolver: zodResolver(churchCouncilMemberFormSchema),
     defaultValues: {
@@ -47,6 +55,7 @@ function ChurchCouncilMemberEditForm({ member }: ChurchCouncilMemberEditFormProp
       periodStart: member.periodStart,
       periodEnd: member.periodEnd ?? "",
       photoUrl: member.photoUrl ?? "",
+      churchLocationId: member.churchLocationId ?? "",
     },
   })
 
@@ -110,7 +119,7 @@ function ChurchCouncilMemberEditForm({ member }: ChurchCouncilMemberEditFormProp
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-6">
-      <ChurchCouncilMemberFormFields form={form} pending={pending} editMode />
+      <ChurchCouncilMemberFormFields form={form} pending={pending} editMode locations={locations} />
 
       <div className="flex flex-wrap gap-3">
         <Button type="submit" disabled={pending}>

@@ -21,6 +21,14 @@ const contentPublicNavigationItems: PublicNavigationItem[] = [
     href: "/jadwal-ibadah",
   },
   {
+    title: "Lokasi",
+    href: "/lokasi",
+  },
+  {
+    title: "Pelayan Gereja",
+    href: "/pelayan",
+  },
+  {
     title: "Pawartos",
     href: "/pawartos",
   },

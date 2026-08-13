@@ -1,6 +1,7 @@
 import type { ZodIssue } from "zod"
 
-type ChurchCouncilMemberField = "fullName" | "position" | "periodStart" | "periodEnd" | "photoUrl"
+type ChurchCouncilMemberField =
+  "fullName" | "churchLocationId" | "position" | "periodStart" | "periodEnd" | "photoUrl"
 
 type ChurchCouncilMemberFieldErrors = Partial<Record<ChurchCouncilMemberField, string[]>>
 
@@ -20,6 +21,7 @@ const initialChurchCouncilMemberActionState: ChurchCouncilMemberActionState = {
 
 const churchCouncilMemberFields = new Set<ChurchCouncilMemberField>([
   "fullName",
+  "churchLocationId",
   "position",
   "periodStart",
   "periodEnd",

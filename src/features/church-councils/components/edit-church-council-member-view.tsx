@@ -18,7 +18,20 @@ type EditChurchCouncilMemberViewProps = {
     sortOrder: number
     isActive: boolean
     isCurrent: boolean
+    churchLocationId: string | null
+    churchLocation: {
+      id: string
+      name: string
+      type: "CHURCH" | "PEPANTHAN"
+      isActive: boolean
+    } | null
   }
+  locations: {
+    id: string
+    name: string
+    type: "CHURCH" | "PEPANTHAN"
+    isActive?: boolean
+  }[]
 }
 
 const dateFormatter = new Intl.DateTimeFormat("id-ID", {
@@ -32,7 +45,7 @@ function formatDate(value: string) {
   return dateFormatter.format(new Date(`${value}T00:00:00.000Z`))
 }
 
-function EditChurchCouncilMemberView({ member }: EditChurchCouncilMemberViewProps) {
+function EditChurchCouncilMemberView({ member, locations }: EditChurchCouncilMemberViewProps) {
   return (
     <main className="space-y-6">
       <div>
@@ -94,12 +107,14 @@ function EditChurchCouncilMemberView({ member }: EditChurchCouncilMemberViewProp
           <ChurchCouncilMemberEditForm
             member={{
               id: member.id,
+              churchLocationId: member.churchLocationId,
               fullName: member.fullName,
               position: member.position,
               periodStart: member.periodStart,
               periodEnd: member.periodEnd,
               photoUrl: member.photoUrl,
             }}
+            locations={locations}
           />
         </CardContent>
       </Card>
@@ -110,6 +125,12 @@ function EditChurchCouncilMemberView({ member }: EditChurchCouncilMemberViewProp
         </CardHeader>
 
         <CardContent className="grid gap-5 text-sm sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <p className="text-muted-foreground">Lokasi Pelayanan</p>
+
+            <p className="mt-1 font-medium">{member.churchLocation?.name ?? "Belum ditetapkan"}</p>
+          </div>
+
           <div>
             <p className="text-muted-foreground">Jabatan</p>
 

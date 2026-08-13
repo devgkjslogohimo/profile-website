@@ -3,6 +3,7 @@ import { HomeContactCta } from "@/features/public-site/components/home-contact-c
 import { HomeGallerySection } from "@/features/public-site/components/home-gallery-section"
 import { HomeHero } from "@/features/public-site/components/home-hero"
 import { HomeNewsSection } from "@/features/public-site/components/home-news-section"
+import { HomePawartosSection } from "@/features/public-site/components/home-pawartos-section"
 import { HomeQuickLinks } from "@/features/public-site/components/home-quick-links"
 import { HomeWorshipSection } from "@/features/public-site/components/home-worship-section"
 import { getHomepageData } from "@/features/public-site/queries/get-homepage-data"
@@ -23,6 +24,8 @@ async function PublicHomePage() {
       <HomeQuickLinks />
 
       <HomeWorshipSection schedule={homepageData.worshipSchedule} />
+
+      <HomePawartosSection items={homepageData.pawartos} />
 
       <HomeNewsSection news={homepageData.news} />
 

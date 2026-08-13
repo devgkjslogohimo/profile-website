@@ -74,6 +74,7 @@ model ChurchLocation {
 
   worshipServices WorshipService[]
   images          ChurchLocationImage[]
+  councilMembers  ChurchCouncilMember[]
 
   @@index([type])
   @@index([isActive, sortOrder])
@@ -231,17 +232,28 @@ model ChurchPastor {
 }
 
 model ChurchCouncilMember {
-  id          String    @id @default(cuid())
-  fullName    String
-  position    String
+  id String @id @default(cuid())
+
+  churchLocationId String
+
+  fullName String
+  position String
+
   periodStart DateTime  @db.Date
   periodEnd   DateTime? @db.Date
-  photoUrl    String?
-  sortOrder   Int       @default(0)
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 
+  photoUrl String?
+
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  churchLocation ChurchLocation @relation(fields: [churchLocationId], references: [id], onDelete: Restrict)
+
+  @@index([churchLocationId])
+  @@index([churchLocationId, sortOrder])
   @@index([sortOrder])
   @@index([isActive])
   @@index([periodStart])

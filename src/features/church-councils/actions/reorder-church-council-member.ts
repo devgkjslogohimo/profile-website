@@ -16,6 +16,7 @@ async function reorderChurchCouncilMember(id: string, direction: ReorderDirectio
     },
     select: {
       id: true,
+      churchLocationId: true,
       sortOrder: true,
     },
   })
@@ -27,10 +28,18 @@ async function reorderChurchCouncilMember(id: string, direction: ReorderDirectio
     }
   }
 
+  if (!member.churchLocationId) {
+    return {
+      success: false,
+      message: "Tetapkan lokasi pelayanan terlebih dahulu.",
+    }
+  }
+
   const neighbor =
     direction === "up"
       ? await prisma.churchCouncilMember.findFirst({
           where: {
+            churchLocationId: member.churchLocationId,
             sortOrder: {
               lt: member.sortOrder,
             },
@@ -45,6 +54,7 @@ async function reorderChurchCouncilMember(id: string, direction: ReorderDirectio
         })
       : await prisma.churchCouncilMember.findFirst({
           where: {
+            churchLocationId: member.churchLocationId,
             sortOrder: {
               gt: member.sortOrder,
             },

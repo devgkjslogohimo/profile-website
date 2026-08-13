@@ -7,7 +7,7 @@ const getHomepageData = cache(async () => {
   const now = new Date()
   const today = getWibTodayDate(now)
 
-  const [worshipSchedule, agendas, news, galleryAlbums] = await Promise.all([
+  const [worshipSchedule, agendas, news, galleryAlbums, pawartos] = await Promise.all([
     prisma.worshipSchedule.findFirst({
       where: {
         isPublished: true,
@@ -197,6 +197,31 @@ const getHomepageData = cache(async () => {
 
       take: 4,
     }),
+
+    prisma.pawartos.findMany({
+      where: {
+        status: "PUBLISHED",
+      },
+
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        publicationDate: true,
+        description: true,
+      },
+
+      orderBy: [
+        {
+          publicationDate: "desc",
+        },
+        {
+          createdAt: "desc",
+        },
+      ],
+
+      take: 3,
+    }),
   ])
 
   return {
@@ -204,6 +229,7 @@ const getHomepageData = cache(async () => {
     agendas,
     news,
     galleryAlbums,
+    pawartos,
   }
 })
 

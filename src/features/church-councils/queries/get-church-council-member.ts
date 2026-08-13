@@ -5,6 +5,17 @@ async function getChurchCouncilMember(id: string) {
     where: {
       id,
     },
+
+    include: {
+      churchLocation: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          isActive: true,
+        },
+      },
+    },
   })
 }
 

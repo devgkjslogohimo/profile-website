@@ -20,10 +20,24 @@ type ChurchCouncilMemberListItem = {
   photoUrl: string | null
   sortOrder: number
   isActive: boolean
+  churchLocationId: string | null
+  churchLocation: {
+    id: string
+    name: string
+    type: "CHURCH" | "PEPANTHAN"
+    sortOrder: number
+    isActive: boolean
+  } | null
 }
 
 type ChurchCouncilMemberManagerProps = {
   members: ChurchCouncilMemberListItem[]
+  locations: {
+    id: string
+    name: string
+    type: "CHURCH" | "PEPANTHAN"
+    sortOrder: number
+  }[]
 }
 
 const dateFormatter = new Intl.DateTimeFormat("id-ID", {
@@ -41,7 +55,7 @@ function formatPeriod(periodStart: Date, periodEnd: Date | null) {
   return `${formatDate(periodStart)} — ${periodEnd ? formatDate(periodEnd) : "Sekarang"}`
 }
 
-function ChurchCouncilMemberManager({ members }: ChurchCouncilMemberManagerProps) {
+function ChurchCouncilMemberManager({ members, locations }: ChurchCouncilMemberManagerProps) {
   const currentCount = members.filter((member) =>
     isCurrentChurchCouncilMemberPeriod(member.periodStart, member.periodEnd)
   ).length
@@ -118,7 +132,7 @@ function ChurchCouncilMemberManager({ members }: ChurchCouncilMemberManagerProps
             </summary>
 
             <div className="mt-6 border-t pt-6">
-              <ChurchCouncilMemberCreateForm />
+              <ChurchCouncilMemberCreateForm locations={locations} />
             </div>
           </details>
         </CardContent>
@@ -151,6 +165,14 @@ function ChurchCouncilMemberManager({ members }: ChurchCouncilMemberManagerProps
                 member.periodEnd
               )
 
+              const membersAtSameLocation = members.filter(
+                (candidate) => candidate.churchLocationId === member.churchLocationId
+              )
+
+              const locationIndex = membersAtSameLocation.findIndex(
+                (candidate) => candidate.id === member.id
+              )
+
               return (
                 <Card key={member.id}>
                   <CardHeader>
@@ -162,6 +184,21 @@ function ChurchCouncilMemberManager({ members }: ChurchCouncilMemberManagerProps
                           {member.position}
                         </p>
                       </div>
+
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        {member.churchLocation ? (
+                          <>
+                            Lokasi pelayanan:{" "}
+                            <span className="font-medium text-foreground">
+                              {member.churchLocation.name}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="font-medium text-destructive">
+                            Lokasi pelayanan belum ditetapkan
+                          </span>
+                        )}
+                      </p>
 
                       <div className="flex shrink-0 flex-col items-end gap-2">
                         {isCurrent ? <Badge variant="secondary">Saat ini</Badge> : null}
@@ -213,8 +250,10 @@ function ChurchCouncilMemberManager({ members }: ChurchCouncilMemberManagerProps
                       <ReorderChurchCouncilMemberButtons
                         id={member.id}
                         name={member.fullName}
-                        canMoveUp={index > 0}
-                        canMoveDown={index < members.length - 1}
+                        canMoveUp={locationIndex > 0}
+                        canMoveDown={
+                          locationIndex >= 0 && locationIndex < membersAtSameLocation.length - 1
+                        }
                       />
 
                       <ToggleChurchCouncilMemberStatus
