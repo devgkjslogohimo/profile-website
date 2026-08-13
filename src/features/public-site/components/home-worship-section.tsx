@@ -1,11 +1,8 @@
 import Link from "next/link"
-import { FiClock, FiMapPin } from "react-icons/fi"
+import { FiArrowRight, FiClock, FiMapPin } from "react-icons/fi"
 
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
-import { SectionHeader } from "@/components/shared/section-header"
-import { buttonVariants } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 
 type HomeWorshipSectionProps = {
   schedule: {
@@ -34,11 +31,6 @@ const dateFormatter = new Intl.DateTimeFormat("id-ID", {
   day: "numeric",
   month: "long",
   year: "numeric",
-
-  /*
-   * WorshipSchedule.date adalah
-   * PostgreSQL DATE.
-   */
   timeZone: "UTC",
 })
 
@@ -51,53 +43,64 @@ const timeFormatter = new Intl.DateTimeFormat("id-ID", {
 
 function HomeWorshipSection({ schedule }: HomeWorshipSectionProps) {
   return (
-    <Section>
+    <Section className="bg-primary text-primary-foreground">
       <Container>
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <SectionHeader
-            eyebrow="Beribadah Bersama"
-            title="Jadwal Ibadah Terdekat"
-            description={
-              schedule
+        <div className="grid gap-12 lg:grid-cols-[minmax(260px,0.7fr)_minmax(0,1.3fr)] lg:gap-20">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.18em] text-primary-foreground/65 uppercase">
+              Beribadah Bersama
+            </p>
+
+            <h2 className="mt-4 max-w-md font-heading text-4xl leading-tight font-medium tracking-tight md:text-5xl">
+              Jadwal Ibadah Terdekat
+            </h2>
+
+            <p className="mt-5 max-w-md text-sm leading-7 text-primary-foreground/70 md:text-base">
+              {schedule
                 ? dateFormatter.format(schedule.date)
-                : "Jadwal ibadah berikutnya akan diperbarui melalui website."
-            }
-          />
+                : "Jadwal ibadah berikutnya akan diperbarui melalui website."}
+            </p>
 
-          <Link
-            href="/jadwal-ibadah"
-            className={buttonVariants({
-              variant: "outline",
-            })}
-          >
-            Semua Jadwal
-          </Link>
-        </div>
+            <Link
+              href="/jadwal-ibadah"
+              className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-primary-foreground hover:underline"
+            >
+              Semua Jadwal
+              <FiArrowRight aria-hidden="true" className="size-4" />
+            </Link>
+          </div>
 
-        {schedule && schedule.services.length > 0 ? (
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {schedule.services.map((service) => (
-              <Card
-                key={service.id}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-background transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none"
-              >
-                <CardContent className="flex h-full flex-col p-6">
-                  <p className="text-xs font-semibold tracking-[0.16em] text-primary uppercase">
-                    {service.churchLocation.type === "PEPANTHAN" ? "Pepanthan" : "Gereja"}
-                  </p>
+          {schedule && schedule.services.length > 0 ? (
+            <div className="border-t border-primary-foreground/20">
+              {schedule.services.map((service) => (
+                <div
+                  key={service.id}
+                  className="grid gap-5 border-b border-primary-foreground/20 py-7 sm:grid-cols-[8rem_1fr] md:grid-cols-[9rem_1fr_auto] md:items-start"
+                >
+                  <div>
+                    <p className="flex items-center gap-2 text-primary-foreground/65">
+                      <FiClock aria-hidden="true" className="size-4" />
 
-                  <h3 className="mt-3 font-heading text-xl font-medium">{service.name}</h3>
-
-                  <div className="mt-5 space-y-3 text-sm text-muted-foreground">
-                    <p className="flex items-center gap-2">
-                      <FiClock className="size-4 shrink-0 text-primary" />
-                      {timeFormatter.format(service.startsAt).replace(".", ":")} WIB
+                      <span className="font-heading text-2xl font-medium text-primary-foreground">
+                        {timeFormatter.format(service.startsAt).replace(".", ":")}
+                      </span>
                     </p>
 
-                    <p className="mt-auto inline-flex pt-5 text-sm font-medium text-primary hover:underline">
-                      <FiMapPin className="mt-0.5 size-4 shrink-0 text-primary" />
+                    <p className="mt-1 text-xs text-primary-foreground/55">WIB</p>
+                  </div>
 
-                      <span>{service.churchLocation.name}</span>
+                  <div>
+                    <p className="text-xs font-semibold tracking-[0.15em] text-primary-foreground/60 uppercase">
+                      {service.churchLocation.type === "PEPANTHAN" ? "Pepanthan" : "Gereja"}
+                    </p>
+
+                    <h3 className="mt-2 font-heading text-2xl leading-snug font-medium">
+                      {service.name}
+                    </h3>
+
+                    <p className="mt-3 flex items-start gap-2 text-sm leading-6 text-primary-foreground/70">
+                      <FiMapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+                      {service.churchLocation.name}
                     </p>
                   </div>
 
@@ -106,20 +109,20 @@ function HomeWorshipSection({ schedule }: HomeWorshipSectionProps) {
                       href={service.churchLocation.googleMapsUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-5 inline-flex text-sm font-medium text-primary hover:underline"
+                      className="text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground hover:underline md:pt-7"
                     >
-                      Buka Google Maps
+                      Google Maps
                     </a>
                   ) : null}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <div className="mt-10 rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-            Belum ada jadwal ibadah Published yang akan datang.
-          </div>
-        )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="border-t border-primary-foreground/20 py-8 text-sm leading-7 text-primary-foreground/70">
+              Belum ada jadwal ibadah Published yang akan datang.
+            </div>
+          )}
+        </div>
       </Container>
     </Section>
   )

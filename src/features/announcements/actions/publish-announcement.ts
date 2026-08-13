@@ -75,6 +75,7 @@ async function publishAnnouncement(id: string): Promise<AnnouncementPublicationA
   revalidatePath("/admin/pengumuman")
   revalidatePath(`/admin/pengumuman/${id}/edit`)
 
+  revalidatePath("/")
   revalidatePath("/pengumuman")
   revalidatePath(`/pengumuman/${announcement.slug}`)
 

@@ -1,6 +1,6 @@
 import Link from "next/link"
 import type { IconType } from "react-icons"
-import { FiBell, FiCalendar, FiFileText, FiImage } from "react-icons/fi"
+import { FiArrowRight, FiBell, FiCalendar, FiFileText, FiImage } from "react-icons/fi"
 
 import { Container } from "@/components/shared/container"
 
@@ -14,25 +14,25 @@ type QuickLink = {
 const quickLinks: QuickLink[] = [
   {
     title: "Jadwal Ibadah",
-    description: "Lihat waktu dan lokasi ibadah yang akan datang.",
+    description: "Waktu dan lokasi ibadah.",
     href: "/jadwal-ibadah",
     icon: FiCalendar,
   },
   {
     title: "Pawartos",
-    description: "Baca Pawartos dan informasi jemaat terbaru.",
+    description: "Warta jemaat terbaru.",
     href: "/pawartos",
     icon: FiFileText,
   },
   {
     title: "Pengumuman",
-    description: "Informasi resmi terbaru dari GKJ Slogohimo.",
+    description: "Informasi resmi gereja.",
     href: "/pengumuman",
     icon: FiBell,
   },
   {
     title: "Galeri",
-    description: "Dokumentasi kegiatan dan pelayanan gereja.",
+    description: "Dokumentasi kegiatan.",
     href: "/galeri",
     icon: FiImage,
   },
@@ -40,9 +40,12 @@ const quickLinks: QuickLink[] = [
 
 function HomeQuickLinks() {
   return (
-    <section className="relative z-10 -mt-6">
+    <section className="bg-background py-8 md:py-10 lg:py-12">
       <Container>
-        <div className="grid overflow-hidden rounded-2xl border bg-background shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+        <nav
+          aria-label="Akses cepat"
+          className="grid gap-x-8 border-y sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-0"
+        >
           {quickLinks.map((item) => {
             const Icon = item.icon
 
@@ -50,21 +53,29 @@ function HomeQuickLinks() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="group border-b p-6 transition-[background-color,box-shadow] hover:bg-muted/40 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-inset sm:border-r sm:nth-[2n]:border-r-0 lg:border-r lg:border-b-0 lg:last:border-r-0 lg:nth-[2n]:border-r"
+                className="group grid grid-cols-[auto_1fr_auto] items-center gap-4 py-6 lg:border-r lg:px-6 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0"
               >
-                <div className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <Icon aria-hidden="true" className="size-5" />
+                <Icon
+                  aria-hidden="true"
+                  className="size-5 text-primary transition-transform duration-200 group-hover:-translate-y-0.5 motion-reduce:transform-none"
+                />
+
+                <div>
+                  <p className="font-heading text-base font-medium transition-colors group-hover:text-primary">
+                    {item.title}
+                  </p>
+
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">{item.description}</p>
                 </div>
 
-                <h2 className="mt-4 font-heading text-lg font-medium transition-colors group-hover:text-primary">
-                  {item.title}
-                </h2>
-
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
+                <FiArrowRight
+                  aria-hidden="true"
+                  className="size-4 text-muted-foreground transition-[transform,color] duration-200 group-hover:translate-x-1 group-hover:text-primary motion-reduce:transform-none"
+                />
               </Link>
             )
           })}
-        </div>
+        </nav>
       </Container>
     </section>
   )

@@ -20,33 +20,33 @@ function HomeContactCta({ settings }: HomeContactCtaProps) {
   }
 
   return (
-    <section className="border-t bg-primary text-primary-foreground">
-      <Container className="py-14 md:py-16">
-        <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold tracking-[0.18em] text-primary-foreground/70 uppercase">
+    <section className="border-t bg-foreground text-background">
+      <Container className="py-16 md:py-20 lg:py-24">
+        <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:gap-20">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.18em] text-background/60 uppercase">
               Hubungi Kami
             </p>
 
-            <h2 className="mt-3 font-heading text-3xl font-medium tracking-tight md:text-4xl">
+            <h2 className="mt-4 max-w-3xl font-heading text-4xl leading-tight font-medium tracking-tight md:text-5xl lg:text-6xl">
               Terhubung dengan {settings.siteName}
             </h2>
 
-            <p className="mt-4 max-w-xl text-sm leading-7 text-primary-foreground/75 md:text-base">
-              Untuk informasi lebih lanjut mengenai kegiatan, pelayanan, dan kehidupan jemaat,
-              silakan hubungi melalui kanal yang tersedia.
+            <p className="mt-6 max-w-2xl text-sm leading-7 text-background/65 md:text-base">
+              Untuk informasi mengenai kegiatan, pelayanan, dan kehidupan jemaat, silakan hubungi
+              melalui kanal yang tersedia.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3 lg:max-w-md lg:justify-end">
+          <div className="border-t border-background/20">
             {whatsappHref ? (
               <a
                 href={whatsappHref}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-background px-5 text-sm font-medium text-foreground transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-primary focus-visible:outline-none"
+                className="group flex items-center gap-4 border-b border-background/20 py-4 text-sm font-medium transition-opacity hover:opacity-75"
               >
-                <FaWhatsapp aria-hidden="true" className="size-4" />
+                <FaWhatsapp aria-hidden="true" className="size-5" />
                 WhatsApp
               </a>
             ) : null}
@@ -54,7 +54,7 @@ function HomeContactCta({ settings }: HomeContactCtaProps) {
             {telHref && settings.phone ? (
               <a
                 href={telHref}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-primary-foreground/25 px-5 text-sm font-medium transition-colors hover:bg-primary-foreground/10 focus-visible:ring-2 focus-visible:ring-primary-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-primary focus-visible:outline-none"
+                className="group flex items-center gap-4 border-b border-background/20 py-4 text-sm font-medium transition-opacity hover:opacity-75"
               >
                 <FaPhone aria-hidden="true" className="size-4" />
                 {settings.phone}
@@ -64,10 +64,10 @@ function HomeContactCta({ settings }: HomeContactCtaProps) {
             {settings.email ? (
               <a
                 href={`mailto:${settings.email}`}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-primary-foreground/25 px-5 text-sm font-medium transition-colors hover:bg-primary-foreground/10 focus-visible:ring-2 focus-visible:ring-primary-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-primary focus-visible:outline-none"
+                className="group flex items-center gap-4 border-b border-background/20 py-4 text-sm font-medium transition-opacity hover:opacity-75"
               >
                 <FaEnvelope aria-hidden="true" className="size-4" />
-                Email
+                {settings.email}
               </a>
             ) : null}
           </div>

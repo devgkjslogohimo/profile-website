@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AnnouncementEditForm } from "@/features/announcements/components/announcement-edit-form"
 import type { RichTextContent } from "@/lib/rich-text"
 
+import { getAnnouncementDateTimeInputValue } from "../lib/announcement-date-time"
 import { AnnouncementPublicationButton } from "./announcement-publication-button"
 import { DeleteAnnouncementButton } from "./delete-announcement-button"
 
@@ -28,6 +29,8 @@ type EditAnnouncementViewProps = {
       name: string
       email: string
     }
+
+    displayUntil: Date | null
   }
 
   canPublish: boolean
@@ -99,6 +102,9 @@ function EditAnnouncementView({ announcement, canPublish }: EditAnnouncementView
             announcement={{
               id: announcement.id,
               title: announcement.title,
+              displayUntil: announcement.displayUntil
+                ? getAnnouncementDateTimeInputValue(announcement.displayUntil)
+                : null,
               content: announcement.content,
             }}
           />
@@ -115,6 +121,12 @@ function EditAnnouncementView({ announcement, canPublish }: EditAnnouncementView
             <p className="text-muted-foreground">Penulis</p>
 
             <p className="mt-1 font-medium">{announcement.author.name}</p>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground">Banner Publik Sampai</p>
+
+            <p className="mt-1 font-medium">{formatDateTime(announcement.displayUntil)}</p>
           </div>
 
           <div>

@@ -1,11 +1,8 @@
 import Link from "next/link"
-import { FiCalendar, FiMapPin } from "react-icons/fi"
+import { FiArrowRight, FiMapPin } from "react-icons/fi"
 
-import { GoogleDriveImage } from "@/components/media/google-drive-image"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
-import { SectionHeader } from "@/components/shared/section-header"
-import { buttonVariants } from "@/components/ui/button"
 
 type HomeAgendaSectionProps = {
   agendas: {
@@ -24,13 +21,26 @@ type HomeAgendaSectionProps = {
   }[]
 }
 
-const dateFormatter = new Intl.DateTimeFormat("id-ID", {
-  weekday: "short",
-  day: "numeric",
-  month: "long",
+const dayFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "2-digit",
+  timeZone: "Asia/Jakarta",
+})
+
+const monthFormatter = new Intl.DateTimeFormat("id-ID", {
+  month: "short",
   year: "numeric",
+  timeZone: "Asia/Jakarta",
+})
+
+const weekdayFormatter = new Intl.DateTimeFormat("id-ID", {
+  weekday: "long",
+  timeZone: "Asia/Jakarta",
+})
+
+const timeFormatter = new Intl.DateTimeFormat("id-ID", {
   hour: "2-digit",
   minute: "2-digit",
+  hour12: false,
   timeZone: "Asia/Jakarta",
 })
 
@@ -42,72 +52,80 @@ function HomeAgendaSection({ agendas }: HomeAgendaSectionProps) {
   return (
     <Section className="bg-muted/30">
       <Container>
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <SectionHeader
-            eyebrow="Kegiatan"
-            title="Agenda Mendatang"
-            description="Kegiatan dan pelayanan GKJ Slogohimo yang akan datang."
-          />
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
+              Kegiatan
+            </p>
+
+            <h2 className="mt-3 font-heading text-4xl font-medium tracking-tight md:text-5xl">
+              Agenda Mendatang
+            </h2>
+
+            <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground md:text-base">
+              Kegiatan dan pelayanan GKJ Slogohimo yang akan datang.
+            </p>
+          </div>
 
           <Link
             href="/agenda"
-            className={buttonVariants({
-              variant: "outline",
-            })}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
           >
-            Lihat Semua Agenda
+            Semua Agenda
+            <FiArrowRight aria-hidden="true" className="size-4" />
           </Link>
         </div>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 border-t">
           {agendas.map((item) => (
             <article
               key={item.id}
-              className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-background transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md motion-reduce:transform-none motion-reduce:transition-none"
+              className="grid gap-6 border-b py-8 md:grid-cols-[8rem_1fr_auto] md:items-start md:gap-10"
             >
-              <GoogleDriveImage
-                url={item.coverImageUrl}
-                alt={`Cover ${item.title}`}
-                className="rounded-none border-0"
-              />
+              <div>
+                <p className="font-heading text-5xl leading-none font-medium tracking-tight text-primary">
+                  {dayFormatter.format(item.startsAt)}
+                </p>
 
-              <div className="flex flex-1 flex-col p-6">
-                <div className="space-y-2 text-xs text-muted-foreground">
-                  <p className="flex items-start gap-2">
-                    <FiCalendar className="mt-0.5 size-4 shrink-0 text-primary" />
+                <p className="mt-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  {monthFormatter.format(item.startsAt)}
+                </p>
+              </div>
 
-                    <span>{dateFormatter.format(item.startsAt)} WIB</span>
-                  </p>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">
+                  {weekdayFormatter.format(item.startsAt)} ·{" "}
+                  {timeFormatter.format(item.startsAt).replace(".", ":")} WIB
+                </p>
 
-                  {item.location ? (
-                    <p className="flex items-start gap-2">
-                      <FiMapPin className="mt-0.5 size-4 shrink-0 text-primary" />
-
-                      <span>{item.location}</span>
-                    </p>
-                  ) : null}
-                </div>
-
-                <h3 className="mt-4 font-heading text-xl leading-snug font-medium">
+                <h3 className="mt-2 font-heading text-2xl leading-snug font-medium md:text-3xl">
                   <Link
                     href={`/agenda/${item.slug}`}
-                    className="transition-colors group-hover:text-primary"
+                    className="transition-colors hover:text-primary"
                   >
                     {item.title}
                   </Link>
                 </h3>
 
-                <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted-foreground">
+                {item.location ? (
+                  <p className="mt-3 flex items-start gap-2 text-sm text-muted-foreground">
+                    <FiMapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-primary" />
+                    {item.location}
+                  </p>
+                ) : null}
+
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
                   {item.excerpt}
                 </p>
-
-                <Link
-                  href={`/agenda/${item.slug}`}
-                  className="mt-auto inline-flex pt-5 text-sm font-medium text-primary hover:underline"
-                >
-                  Lihat Agenda
-                </Link>
               </div>
+
+              <Link
+                href={`/agenda/${item.slug}`}
+                aria-label={`Lihat agenda ${item.title}`}
+                className="inline-flex size-10 items-center justify-center rounded-full border text-primary transition-[background-color,color] hover:bg-primary hover:text-primary-foreground"
+              >
+                <FiArrowRight aria-hidden="true" className="size-4" />
+              </Link>
             </article>
           ))}
         </div>

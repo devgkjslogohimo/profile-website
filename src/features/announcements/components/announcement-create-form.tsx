@@ -18,6 +18,7 @@ import { emptyRichTextContent } from "@/lib/rich-text"
 function createDefaultValues(): AnnouncementFormInput {
   return {
     title: "",
+    displayUntil: "",
     content: structuredClone(emptyRichTextContent),
   }
 }
@@ -26,6 +27,7 @@ function createFormData(values: AnnouncementFormInput) {
   const formData = new FormData()
 
   formData.set("title", values.title)
+  formData.set("displayUntil", values.displayUntil)
   formData.set("content", JSON.stringify(values.content))
 
   return formData

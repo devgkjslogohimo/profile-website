@@ -1,5 +1,4 @@
 import { HomeAgendaSection } from "@/features/public-site/components/home-agenda-section"
-import { HomeAnnouncementsSection } from "@/features/public-site/components/home-announcements-section"
 import { HomeContactCta } from "@/features/public-site/components/home-contact-cta"
 import { HomeGallerySection } from "@/features/public-site/components/home-gallery-section"
 import { HomeHero } from "@/features/public-site/components/home-hero"
@@ -19,8 +18,6 @@ async function PublicHomePage() {
       <HomeQuickLinks />
 
       <HomeWorshipSection schedule={homepageData.worshipSchedule} />
-
-      <HomeAnnouncementsSection announcements={homepageData.announcements} />
 
       <HomeNewsSection news={homepageData.news} />
 

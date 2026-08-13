@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { PublicFooter } from "@/components/public/public-footer"
 import { PublicHeader } from "@/components/public/public-header"
 import { createPublicNavigationItems } from "@/components/public/public-navigation"
+import { getPublicBannerAnnouncements } from "@/features/public-site/queries/get-public-banner-announcements"
 import { getPublicNavigationPages } from "@/features/public-site/queries/get-public-navigation"
 import { getPublicSiteSettings } from "@/features/public-site/queries/get-public-site-settings"
 import { getAbsoluteSiteUrl, getSiteUrl } from "@/lib/site-url"
@@ -72,9 +73,10 @@ async function generateMetadata(): Promise<Metadata> {
 }
 
 async function PublicLayout({ children }: PublicLayoutProps) {
-  const [settings, cmsNavigationPages] = await Promise.all([
+  const [settings, cmsNavigationPages, bannerAnnouncements] = await Promise.all([
     getPublicSiteSettings(),
     getPublicNavigationPages(),
+    getPublicBannerAnnouncements(),
   ])
 
   const navigationItems = createPublicNavigationItems(cmsNavigationPages)
@@ -88,7 +90,11 @@ async function PublicLayout({ children }: PublicLayoutProps) {
         Lewati ke konten utama
       </a>
 
-      <PublicHeader settings={settings} navigationItems={navigationItems} />
+      <PublicHeader
+        settings={settings}
+        navigationItems={navigationItems}
+        announcements={bannerAnnouncements}
+      />
 
       <div id="public-content" tabIndex={-1} className="flex-1 scroll-mt-24 focus:outline-none">
         {children}

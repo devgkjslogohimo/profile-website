@@ -20,6 +20,7 @@ type AnnouncementEditFormProps = {
   announcement: {
     id: string
     title: string
+    displayUntil: string | null
     content: RichTextContent
   }
 }
@@ -28,6 +29,7 @@ function createFormData(values: AnnouncementFormInput) {
   const formData = new FormData()
 
   formData.set("title", values.title)
+  formData.set("displayUntil", values.displayUntil)
   formData.set("content", JSON.stringify(values.content))
 
   return formData
@@ -39,6 +41,7 @@ function AnnouncementEditForm({ announcement }: AnnouncementEditFormProps) {
 
     defaultValues: {
       title: announcement.title,
+      displayUntil: announcement.displayUntil ?? "",
       content: structuredClone(announcement.content),
     },
   })

@@ -58,6 +58,7 @@ async function unpublishAnnouncement(id: string): Promise<AnnouncementPublicatio
   revalidatePath("/admin/pengumuman")
   revalidatePath(`/admin/pengumuman/${id}/edit`)
 
+  revalidatePath("/")
   revalidatePath("/pengumuman")
   revalidatePath(`/pengumuman/${announcement.slug}`)
 

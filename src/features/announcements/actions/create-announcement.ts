@@ -12,6 +12,8 @@ import { announcementFormSchema } from "@/features/announcements/schemas/announc
 import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/lib/db/prisma"
 
+import { createAnnouncementDateTime } from "../lib/announcement-date-time"
+
 function parseContent(value: FormDataEntryValue | null): unknown {
   if (typeof value !== "string") {
     return null
@@ -40,6 +42,7 @@ async function createAnnouncement(
 
   const parsed = announcementFormSchema.safeParse({
     title: String(formData.get("title") ?? ""),
+    displayUntil: String(formData.get("displayUntil") ?? ""),
     content: parseContent(formData.get("content")),
   })
 
@@ -101,6 +104,9 @@ async function createAnnouncement(
          * Ownership selalu berasal dari session.
          */
         authorId: currentUser.id,
+        displayUntil: parsed.data.displayUntil
+          ? createAnnouncementDateTime(parsed.data.displayUntil)
+          : null,
       },
     })
   } catch (error) {

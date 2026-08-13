@@ -51,6 +51,7 @@ async function EditAnnouncementPage({ params }: EditAnnouncementPageProps) {
         status: announcement.status,
 
         publishedAt: announcement.publishedAt,
+        displayUntil: announcement.displayUntil,
 
         createdAt: announcement.createdAt,
 

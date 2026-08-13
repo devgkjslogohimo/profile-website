@@ -47,6 +47,26 @@ function AnnouncementFormFields({ form, pending }: AnnouncementFormFieldsProps) 
       </Field>
 
       <Field>
+        <FieldLabel htmlFor="displayUntil">Banner Pengumuman Sampai</FieldLabel>
+
+        <Input
+          id="displayUntil"
+          type="datetime-local"
+          {...register("displayUntil")}
+          disabled={pending}
+          aria-invalid={Boolean(errors.displayUntil)}
+        />
+
+        <FieldDescription>
+          Opsional. Isi jika pengumuman ingin ditampilkan sebagai banner di atas navigasi pada
+          seluruh halaman publik. Setelah waktu ini banner otomatis tidak lagi tampil, tetapi
+          halaman pengumuman tetap tersedia.
+        </FieldDescription>
+
+        <FieldError errors={getFieldError(errors.displayUntil?.message)} />
+      </Field>
+
+      <Field>
         <FieldLabel>Isi Pengumuman</FieldLabel>
 
         <Controller

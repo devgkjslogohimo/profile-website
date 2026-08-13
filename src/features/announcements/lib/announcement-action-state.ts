@@ -1,6 +1,6 @@
 import type { ZodIssue } from "zod"
 
-type AnnouncementField = "title" | "content"
+type AnnouncementField = "title" | "displayUntil" | "content"
 
 type AnnouncementFieldErrors = Partial<Record<AnnouncementField, string[]>>
 
@@ -18,7 +18,7 @@ const initialAnnouncementActionState: AnnouncementActionState = {
   submissionId: 0,
 }
 
-const announcementFields = new Set<AnnouncementField>(["title", "content"])
+const announcementFields = new Set<AnnouncementField>(["title", "displayUntil", "content"])
 
 function getAnnouncementFieldErrors(issues: ZodIssue[]): AnnouncementFieldErrors {
   const fieldErrors: AnnouncementFieldErrors = {}
