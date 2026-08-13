@@ -28,9 +28,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  pawartos Pawartos[]
-  news     News[]
-  agendas  Agenda[]
+  pawartos      Pawartos[]
+  news          News[]
+  agendas       Agenda[]
+  announcements Announcement[]
 
   @@index([role])
   @@index([isActive])
@@ -423,5 +424,29 @@ model Agenda {
 
   @@index([status, startsAt])
   @@index([startsAt])
+  @@index([authorId])
+}
+
+enum AnnouncementStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Announcement {
+  id      String @id @default(cuid())
+  title   String
+  slug    String @unique
+  content Json
+
+  status      AnnouncementStatus @default(DRAFT)
+  publishedAt DateTime?
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, publishedAt])
   @@index([authorId])
 }
