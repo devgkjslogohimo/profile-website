@@ -32,6 +32,7 @@ model User {
   news          News[]
   agendas       Agenda[]
   announcements Announcement[]
+  sitePages     SitePage[]
 
   @@index([role])
   @@index([isActive])
@@ -439,6 +440,30 @@ model Announcement {
   content Json
 
   status      AnnouncementStatus @default(DRAFT)
+  publishedAt DateTime?
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([authorId])
+}
+
+enum SitePageStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model SitePage {
+  id      String @id @default(cuid())
+  title   String
+  slug    String @unique
+  content Json
+
+  status      SitePageStatus @default(DRAFT)
   publishedAt DateTime?
 
   authorId String
