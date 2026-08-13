@@ -30,6 +30,7 @@ model User {
 
   pawartos Pawartos[]
   news     News[]
+  agendas  Agenda[]
 
   @@index([role])
   @@index([isActive])
@@ -388,4 +389,39 @@ model NewsImage {
 
   @@unique([newsId, googleDriveFileId])
   @@index([newsId, sortOrder])
+}
+
+enum AgendaStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Agenda {
+  id      String @id @default(cuid())
+  title   String
+  slug    String @unique
+  excerpt String
+  content Json
+
+  startsAt DateTime
+  endsAt   DateTime?
+
+  location      String?
+  googleMapsUrl String?
+
+  coverImageUrl    String?
+  coverImageFileId String?
+
+  status      AgendaStatus @default(DRAFT)
+  publishedAt DateTime?
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, startsAt])
+  @@index([startsAt])
+  @@index([authorId])
 }
