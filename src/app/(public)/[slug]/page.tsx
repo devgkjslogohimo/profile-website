@@ -1,10 +1,10 @@
-import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { PublicDetailHeader } from "@/components/public/public-detail-header"
 import { PublicRichText } from "@/components/public/public-rich-text"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
+import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getPublishedSitePageBySlug } from "@/features/public-site/queries/get-public-content"
 import { isRichTextContent } from "@/lib/rich-text"
 
@@ -21,7 +21,7 @@ const dateFormatter = new Intl.DateTimeFormat("id-ID", {
   timeZone: "Asia/Jakarta",
 })
 
-async function generateMetadata({ params }: PublicSitePageProps): Promise<Metadata> {
+async function generateMetadata({ params }: PublicSitePageProps) {
   const { slug } = await params
 
   const sitePage = await getPublishedSitePageBySlug(slug)
@@ -32,9 +32,11 @@ async function generateMetadata({ params }: PublicSitePageProps): Promise<Metada
     }
   }
 
-  return {
+  return createPublicPageMetadata({
     title: sitePage.title,
-  }
+    description: `Informasi ${sitePage.title} dari GKJ Slogohimo.`,
+    pathname: `/${sitePage.slug}`,
+  })
 }
 
 async function PublicSitePage({ params }: PublicSitePageProps) {

@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 import { FiBell, FiInbox } from "react-icons/fi"
 
@@ -6,11 +5,15 @@ import { PublicEmptyState } from "@/components/public/public-empty-state"
 import { PublicPageHeader } from "@/components/public/public-page-header"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
+import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getPublishedAnnouncements } from "@/features/public-site/queries/get-public-content"
 
-export const metadata: Metadata = {
-  title: "Pengumuman",
-  description: "Pengumuman resmi GKJ Slogohimo.",
+async function generateMetadata() {
+  return createPublicPageMetadata({
+    title: "Pengumuman",
+    description: "Pengumuman resmi GKJ Slogohimo.",
+    pathname: "/pengumuman",
+  })
 }
 
 const dateFormatter = new Intl.DateTimeFormat("id-ID", {
@@ -70,4 +73,5 @@ async function PublicAnnouncementsPage() {
   )
 }
 
+export { generateMetadata }
 export default PublicAnnouncementsPage

@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 import { FiFileText, FiInbox } from "react-icons/fi"
 
@@ -6,11 +5,15 @@ import { PublicEmptyState } from "@/components/public/public-empty-state"
 import { PublicPageHeader } from "@/components/public/public-page-header"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
+import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getPublishedPawartos } from "@/features/public-site/queries/get-public-content"
 
-export const metadata: Metadata = {
-  title: "Pawartos",
-  description: "Pawartos GKJ Slogohimo yang telah dipublikasikan.",
+async function generateMetadata() {
+  return createPublicPageMetadata({
+    title: "Pawartos",
+    description: "Pawartos GKJ Slogohimo yang telah dipublikasikan.",
+    pathname: "/pawartos",
+  })
 }
 
 const dateFormatter = new Intl.DateTimeFormat("id-ID", {
@@ -76,4 +79,5 @@ async function PublicPawartosPage() {
   )
 }
 
+export { generateMetadata }
 export default PublicPawartosPage

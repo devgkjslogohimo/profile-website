@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { FiCalendar, FiMapPin } from "react-icons/fi"
 
@@ -8,6 +7,7 @@ import { PublicDetailHeader } from "@/components/public/public-detail-header"
 import { PublicRichText } from "@/components/public/public-rich-text"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
+import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getPublishedAgendaBySlug } from "@/features/public-site/queries/get-public-content"
 import { isRichTextContent } from "@/lib/rich-text"
 
@@ -27,7 +27,7 @@ const dateFormatter = new Intl.DateTimeFormat("id-ID", {
   timeZone: "Asia/Jakarta",
 })
 
-async function generateMetadata({ params }: PublicAgendaDetailPageProps): Promise<Metadata> {
+async function generateMetadata({ params }: PublicAgendaDetailPageProps) {
   const { slug } = await params
   const agenda = await getPublishedAgendaBySlug(slug)
 
@@ -37,10 +37,11 @@ async function generateMetadata({ params }: PublicAgendaDetailPageProps): Promis
     }
   }
 
-  return {
+  return createPublicPageMetadata({
     title: agenda.title,
     description: agenda.excerpt,
-  }
+    pathname: `/agenda/${agenda.slug}`,
+  })
 }
 
 async function PublicAgendaDetailPage({ params }: PublicAgendaDetailPageProps) {

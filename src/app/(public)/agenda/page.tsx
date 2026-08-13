@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 import { FiCalendar, FiMapPin } from "react-icons/fi"
 
@@ -7,11 +6,15 @@ import { PublicEmptyState } from "@/components/public/public-empty-state"
 import { PublicPageHeader } from "@/components/public/public-page-header"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
+import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getPublishedAgendas } from "@/features/public-site/queries/get-public-content"
 
-export const metadata: Metadata = {
-  title: "Agenda",
-  description: "Agenda dan kegiatan GKJ Slogohimo.",
+async function generateMetadata() {
+  return createPublicPageMetadata({
+    title: "Agenda",
+    description: "Agenda dan kegiatan GKJ Slogohimo.",
+    pathname: "/agenda",
+  })
 }
 
 const dateFormatter = new Intl.DateTimeFormat("id-ID", {
@@ -100,4 +103,5 @@ async function PublicAgendaPage() {
   )
 }
 
+export { generateMetadata }
 export default PublicAgendaPage

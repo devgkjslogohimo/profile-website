@@ -59,7 +59,7 @@ async function generateMetadata(): Promise<Metadata> {
     },
 
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: settings.siteName,
       description,
     },

@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { GoogleDriveImage } from "@/components/media/google-drive-image"
@@ -7,6 +6,7 @@ import { PublicDetailHeader } from "@/components/public/public-detail-header"
 import { PublicRichText } from "@/components/public/public-rich-text"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
+import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getPublishedNewsBySlug } from "@/features/public-site/queries/get-public-content"
 import { isRichTextContent } from "@/lib/rich-text"
 
@@ -23,7 +23,7 @@ const dateFormatter = new Intl.DateTimeFormat("id-ID", {
   timeZone: "Asia/Jakarta",
 })
 
-async function generateMetadata({ params }: PublicNewsDetailPageProps): Promise<Metadata> {
+async function generateMetadata({ params }: PublicNewsDetailPageProps) {
   const { slug } = await params
   const news = await getPublishedNewsBySlug(slug)
 
@@ -33,10 +33,11 @@ async function generateMetadata({ params }: PublicNewsDetailPageProps): Promise<
     }
   }
 
-  return {
+  return createPublicPageMetadata({
     title: news.title,
     description: news.excerpt,
-  }
+    pathname: `/berita/${news.slug}`,
+  })
 }
 
 async function PublicNewsDetailPage({ params }: PublicNewsDetailPageProps) {

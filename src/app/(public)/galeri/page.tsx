@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 import { FiImage } from "react-icons/fi"
 
@@ -7,11 +6,15 @@ import { PublicEmptyState } from "@/components/public/public-empty-state"
 import { PublicPageHeader } from "@/components/public/public-page-header"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
+import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getActiveGalleryAlbums } from "@/features/public-site/queries/get-public-content"
 
-export const metadata: Metadata = {
-  title: "Galeri",
-  description: "Galeri dokumentasi kegiatan GKJ Slogohimo.",
+async function generateMetadata() {
+  return createPublicPageMetadata({
+    title: "Galeri",
+    description: "Galeri dokumentasi kegiatan GKJ Slogohimo.",
+    pathname: "/galeri",
+  })
 }
 
 const dateFormatter = new Intl.DateTimeFormat("id-ID", {
@@ -89,4 +92,5 @@ async function PublicGalleryPage() {
   )
 }
 
+export { generateMetadata }
 export default PublicGalleryPage

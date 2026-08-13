@@ -8,7 +8,7 @@ function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/design-system"],
+        disallow: ["/admin", "/api", "/design-system"],
       },
     ],
 

@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { FiExternalLink } from "react-icons/fi"
 import { FiImage } from "react-icons/fi"
@@ -9,6 +8,7 @@ import { PublicDetailHeader } from "@/components/public/public-detail-header"
 import { PublicEmptyState } from "@/components/public/public-empty-state"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
+import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getActiveGalleryAlbumBySlug } from "@/features/public-site/queries/get-public-content"
 
 type PublicGalleryDetailPageProps = {
@@ -24,7 +24,7 @@ const dateFormatter = new Intl.DateTimeFormat("id-ID", {
   timeZone: "UTC",
 })
 
-async function generateMetadata({ params }: PublicGalleryDetailPageProps): Promise<Metadata> {
+async function generateMetadata({ params }: PublicGalleryDetailPageProps) {
   const { slug } = await params
   const album = await getActiveGalleryAlbumBySlug(slug)
 
@@ -34,10 +34,13 @@ async function generateMetadata({ params }: PublicGalleryDetailPageProps): Promi
     }
   }
 
-  return {
+  const description = album.description ?? `Galeri kegiatan GKJ Slogohimo: ${album.title}.`
+
+  return createPublicPageMetadata({
     title: album.title,
-    description: album.description ?? `Galeri kegiatan GKJ Slogohimo: ${album.title}.`,
-  }
+    description,
+    pathname: `/galeri/${album.slug}`,
+  })
 }
 
 async function PublicGalleryDetailPage({ params }: PublicGalleryDetailPageProps) {

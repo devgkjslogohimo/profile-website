@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { FiExternalLink } from "react-icons/fi"
 
@@ -7,6 +6,7 @@ import { PublicDetailHeader } from "@/components/public/public-detail-header"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
 import { buttonVariants } from "@/components/ui/button"
+import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getPublishedPawartosBySlug } from "@/features/public-site/queries/get-public-content"
 import { getGoogleDrivePdfPreviewUrl } from "@/lib/google-drive"
 
@@ -23,7 +23,7 @@ const dateFormatter = new Intl.DateTimeFormat("id-ID", {
   timeZone: "UTC",
 })
 
-async function generateMetadata({ params }: PublicPawartosDetailPageProps): Promise<Metadata> {
+async function generateMetadata({ params }: PublicPawartosDetailPageProps) {
   const { slug } = await params
   const pawartos = await getPublishedPawartosBySlug(slug)
 
@@ -33,12 +33,15 @@ async function generateMetadata({ params }: PublicPawartosDetailPageProps): Prom
     }
   }
 
-  return {
+  const description =
+    pawartos.description ??
+    `Pawartos GKJ Slogohimo tanggal ${dateFormatter.format(pawartos.publicationDate)}.`
+
+  return createPublicPageMetadata({
     title: pawartos.title,
-    description:
-      pawartos.description ??
-      `Pawartos GKJ Slogohimo tanggal ${dateFormatter.format(pawartos.publicationDate)}.`,
-  }
+    description,
+    pathname: `/pawartos/${pawartos.slug}`,
+  })
 }
 
 async function PublicPawartosDetailPage({ params }: PublicPawartosDetailPageProps) {
