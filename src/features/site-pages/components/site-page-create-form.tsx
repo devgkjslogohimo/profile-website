@@ -19,6 +19,10 @@ function createDefaultValues(): SitePageFormInput {
   return {
     title: "",
     content: structuredClone(emptyRichTextContent),
+
+    showInNavigation: false,
+    navigationLabel: "",
+    navigationOrder: 0,
   }
 }
 
@@ -29,13 +33,18 @@ function createFormData(values: SitePageFormInput) {
 
   formData.set("content", JSON.stringify(values.content))
 
+  formData.set("showInNavigation", String(values.showInNavigation))
+
+  formData.set("navigationLabel", values.navigationLabel)
+
+  formData.set("navigationOrder", String(values.navigationOrder))
+
   return formData
 }
 
 function SitePageCreateForm() {
   const form = useForm<SitePageFormInput>({
     resolver: zodResolver(sitePageFormSchema),
-
     defaultValues: createDefaultValues(),
   })
 

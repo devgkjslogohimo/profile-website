@@ -19,6 +19,10 @@ type SitePageListItem = {
   status: "DRAFT" | "PUBLISHED"
   publishedAt: Date | null
 
+  showInNavigation: boolean
+  navigationLabel: string | null
+  navigationOrder: number
+
   createdAt: Date
   updatedAt: Date
 
@@ -169,6 +173,23 @@ function SitePageManager({ sitePages, currentUserId, currentUserRole }: SitePage
                         Alamat publik: <span className="font-mono">/{item.slug}</span>
                       </p>
 
+                      {item.showInNavigation ? (
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          Menu:{" "}
+                          <span className="font-medium text-foreground">
+                            {item.navigationLabel}
+                          </span>
+                          {" · "}
+                          urutan {item.navigationOrder}
+                          {item.status === "DRAFT" ? (
+                            <span>{" · "}akan tampil setelah Published</span>
+                          ) : null}
+                        </p>
+                      ) : (
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          Tidak ditampilkan di navigasi.
+                        </p>
+                      )}
                       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
                         <span>Penulis: {item.author.name}</span>
 

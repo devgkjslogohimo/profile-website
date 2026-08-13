@@ -20,6 +20,10 @@ type EditSitePageViewProps = {
     status: "DRAFT" | "PUBLISHED"
     publishedAt: Date | null
 
+    showInNavigation: boolean
+    navigationLabel: string | null
+    navigationOrder: number
+
     createdAt: Date
     updatedAt: Date
 
@@ -100,6 +104,12 @@ function EditSitePageView({ sitePage, canPublish }: EditSitePageViewProps) {
               id: sitePage.id,
               title: sitePage.title,
               content: sitePage.content,
+
+              showInNavigation: sitePage.showInNavigation,
+
+              navigationLabel: sitePage.navigationLabel,
+
+              navigationOrder: sitePage.navigationOrder,
             }}
           />
         </CardContent>
@@ -130,6 +140,24 @@ function EditSitePageView({ sitePage, canPublish }: EditSitePageViewProps) {
               {sitePage.status === "PUBLISHED" ? "Published" : "Draft"}
             </p>
           </div>
+
+          <div>
+            <p className="text-muted-foreground">Navigasi</p>
+
+            <p className="mt-1 font-medium">
+              {sitePage.showInNavigation
+                ? sitePage.navigationLabel || "Aktif"
+                : "Tidak ditampilkan"}
+            </p>
+          </div>
+
+          {sitePage.showInNavigation ? (
+            <div>
+              <p className="text-muted-foreground">Urutan Menu</p>
+
+              <p className="mt-1 font-medium">{sitePage.navigationOrder}</p>
+            </div>
+          ) : null}
 
           <div>
             <p className="text-muted-foreground">Dipublikasikan</p>

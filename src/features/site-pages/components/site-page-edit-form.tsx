@@ -21,6 +21,10 @@ type SitePageEditFormProps = {
     id: string
     title: string
     content: RichTextContent
+
+    showInNavigation: boolean
+    navigationLabel: string | null
+    navigationOrder: number
   }
 }
 
@@ -30,6 +34,12 @@ function createFormData(values: SitePageFormInput) {
   formData.set("title", values.title)
 
   formData.set("content", JSON.stringify(values.content))
+
+  formData.set("showInNavigation", String(values.showInNavigation))
+
+  formData.set("navigationLabel", values.navigationLabel)
+
+  formData.set("navigationOrder", String(values.navigationOrder))
 
   return formData
 }
@@ -42,6 +52,12 @@ function SitePageEditForm({ sitePage }: SitePageEditFormProps) {
       title: sitePage.title,
 
       content: structuredClone(sitePage.content),
+
+      showInNavigation: sitePage.showInNavigation,
+
+      navigationLabel: sitePage.navigationLabel ?? "",
+
+      navigationOrder: sitePage.navigationOrder,
     },
   })
 

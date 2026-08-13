@@ -49,8 +49,13 @@ async function EditSitePage({ params }: EditSitePageProps) {
         content,
 
         status: sitePage.status,
-
         publishedAt: sitePage.publishedAt,
+
+        showInNavigation: sitePage.showInNavigation,
+
+        navigationLabel: sitePage.navigationLabel,
+
+        navigationOrder: sitePage.navigationOrder,
 
         createdAt: sitePage.createdAt,
 

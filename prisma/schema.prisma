@@ -466,6 +466,10 @@ model SitePage {
   status      SitePageStatus @default(DRAFT)
   publishedAt DateTime?
 
+  showInNavigation Boolean @default(false)
+  navigationLabel  String?
+  navigationOrder  Int     @default(0)
+
   authorId String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Restrict)
 
@@ -473,5 +477,6 @@ model SitePage {
   updatedAt DateTime @updatedAt
 
   @@index([status, publishedAt])
+  @@index([showInNavigation, navigationOrder])
   @@index([authorId])
 }

@@ -10,6 +10,10 @@ async function getSitePages() {
       status: true,
       publishedAt: true,
 
+      showInNavigation: true,
+      navigationLabel: true,
+      navigationOrder: true,
+
       createdAt: true,
       updatedAt: true,
 

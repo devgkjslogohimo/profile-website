@@ -80,6 +80,12 @@ async function updateSitePage(
     title: String(formData.get("title") ?? ""),
 
     content: parseContent(formData.get("content")),
+
+    showInNavigation: formData.get("showInNavigation") === "true",
+
+    navigationLabel: String(formData.get("navigationLabel") ?? ""),
+
+    navigationOrder: Number(formData.get("navigationOrder") ?? 0),
   })
 
   if (!parsed.success) {
@@ -162,6 +168,11 @@ async function updateSitePage(
         slug,
 
         content: toPrismaJson(parsed.data.content),
+        showInNavigation: parsed.data.showInNavigation,
+
+        navigationLabel: parsed.data.showInNavigation ? parsed.data.navigationLabel : null,
+
+        navigationOrder: parsed.data.navigationOrder,
       },
     })
   } catch (error) {

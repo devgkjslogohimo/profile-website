@@ -1,6 +1,7 @@
 import type { ZodIssue } from "zod"
 
-type SitePageField = "title" | "content"
+type SitePageField =
+  "title" | "content" | "showInNavigation" | "navigationLabel" | "navigationOrder"
 
 type SitePageFieldErrors = Partial<Record<SitePageField, string[]>>
 
@@ -18,7 +19,13 @@ const initialSitePageActionState: SitePageActionState = {
   submissionId: 0,
 }
 
-const sitePageFields = new Set<SitePageField>(["title", "content"])
+const sitePageFields = new Set<SitePageField>([
+  "title",
+  "content",
+  "showInNavigation",
+  "navigationLabel",
+  "navigationOrder",
+])
 
 function getSitePageFieldErrors(issues: ZodIssue[]): SitePageFieldErrors {
   const fieldErrors: SitePageFieldErrors = {}
