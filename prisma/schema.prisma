@@ -25,9 +25,11 @@ model User {
 
   lastLoginAt DateTime?
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  pawartos  Pawartos[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pawartos Pawartos[]
+  news     News[]
 
   @@index([role])
   @@index([isActive])
@@ -336,4 +338,54 @@ model Pawartos {
   @@index([publicationDate])
   @@index([status, publicationDate])
   @@index([authorId])
+}
+
+enum NewsStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model News {
+  id      String @id @default(cuid())
+  title   String
+  slug    String @unique
+  excerpt String
+  content Json
+
+  coverImageUrl    String?
+  coverImageFileId String?
+
+  status      NewsStatus @default(DRAFT)
+  publishedAt DateTime?
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  images NewsImage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([authorId])
+}
+
+model NewsImage {
+  id String @id @default(cuid())
+
+  newsId String
+  news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  googleDriveUrl    String
+  googleDriveFileId String
+
+  altText   String?
+  caption   String?
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([newsId, googleDriveFileId])
+  @@index([newsId, sortOrder])
 }
