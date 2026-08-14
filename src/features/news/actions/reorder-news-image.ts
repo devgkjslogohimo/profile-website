@@ -1,9 +1,10 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import { canEditNews } from "@/features/news/lib/news-permissions"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 
 type ReorderDirection = "up" | "down"
@@ -128,6 +129,8 @@ async function reorderNewsImage(id: string, direction: ReorderDirection) {
   }
 
   revalidatePath(`/admin/berita/${image.newsId}/edit`)
+
+  updateTag(PUBLIC_CACHE_TAGS.news)
 
   revalidatePath(`/berita/${image.news.slug}`)
 

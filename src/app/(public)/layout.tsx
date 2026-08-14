@@ -8,7 +8,7 @@ import { getPublicNavigationPages } from "@/features/public-site/queries/get-pub
 import { getPublicSiteSettings } from "@/features/public-site/queries/get-public-site-settings"
 import { getAbsoluteSiteUrl, getSiteUrl } from "@/lib/site-url"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 300
 
 type PublicLayoutProps = {
   children: React.ReactNode

@@ -1,12 +1,13 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import { getNewsFieldErrors, type NewsActionState } from "@/features/news/lib/news-action-state"
 import { canEditNews } from "@/features/news/lib/news-permissions"
 import { createNewsSlug } from "@/features/news/lib/news-slug"
 import { newsFormSchema } from "@/features/news/schemas/news-schema"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/lib/db/prisma"
 import { getGoogleDriveFileId, normalizeGoogleDriveUrl } from "@/lib/google-drive"
@@ -189,6 +190,14 @@ async function updateNews(
 
   revalidatePath("/admin/berita")
   revalidatePath(`/admin/berita/${id}/edit`)
+
+  updateTag(PUBLIC_CACHE_TAGS.news)
+
+  if (existingNews.status === "PUBLISHED") {
+    revalidatePath("/")
+    revalidatePath("/berita")
+    revalidatePath(`/berita/${slug}`)
+  }
 
   return {
     status: "success",

@@ -46,7 +46,15 @@ function PublicHeader({ settings, navigationItems, announcements }: PublicHeader
 
           <PublicDesktopNavigation navigationItems={navigationItems} />
 
-          <PublicMobileNavigation siteName={settings.siteName} navigationItems={navigationItems} />
+          <PublicMobileNavigation
+            siteName={settings.siteName}
+            navigationItems={navigationItems}
+            socialLinks={{
+              facebookUrl: settings.facebookUrl,
+              instagramUrl: settings.instagramUrl,
+              youtubeUrl: settings.youtubeUrl,
+            }}
+          />
         </Container>
       </div>
     </header>

@@ -1,9 +1,10 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import type { NewsPublicationActionResult } from "@/features/news/lib/news-publication-action-state"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 
 async function unpublishNews(id: string): Promise<NewsPublicationActionResult> {
@@ -58,6 +59,9 @@ async function unpublishNews(id: string): Promise<NewsPublicationActionResult> {
   revalidatePath("/admin/berita")
   revalidatePath(`/admin/berita/${id}/edit`)
 
+  updateTag(PUBLIC_CACHE_TAGS.news)
+
+  revalidatePath("/")
   revalidatePath("/berita")
   revalidatePath(`/berita/${news.slug}`)
 

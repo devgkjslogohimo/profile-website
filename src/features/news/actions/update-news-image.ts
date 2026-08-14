@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import {
@@ -9,6 +9,7 @@ import {
 } from "@/features/news/lib/news-image-action-state"
 import { canEditNews } from "@/features/news/lib/news-permissions"
 import { newsImageFormSchema } from "@/features/news/schemas/news-image-schema"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 import { getGoogleDriveFileId, normalizeGoogleDriveUrl } from "@/lib/google-drive"
 
@@ -144,6 +145,8 @@ async function updateNewsImage(
   revalidatePath("/admin/berita")
   revalidatePath(`/admin/berita/${newsId}/edit`)
   revalidatePath(`/admin/berita/${newsId}/foto/${imageId}/edit`)
+
+  updateTag(PUBLIC_CACHE_TAGS.news)
 
   revalidatePath(`/berita/${image.news.slug}`)
 
