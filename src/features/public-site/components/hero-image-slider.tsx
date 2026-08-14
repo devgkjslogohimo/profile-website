@@ -114,6 +114,7 @@ function HeroImageSlider({ slides }: HeroImageSliderProps) {
                 alt={isActive ? slide.altText : ""}
                 fill
                 sizes="100vw"
+                quality={75}
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
                 className="object-cover"

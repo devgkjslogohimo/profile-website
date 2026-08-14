@@ -31,6 +31,16 @@ export async function GET(request: Request, { params }: GoogleDriveMediaRoutePro
 
   const resourceKey = requestUrl.searchParams.get("resourceKey")?.trim()
 
+  const requestedWidth = requestUrl.searchParams.get("width")?.trim()
+
+  const allowedWidths = new Set(["750", "1000", "1200", "1600", "2000"])
+
+  if (requestedWidth && !allowedWidths.has(requestedWidth)) {
+    return createErrorResponse("Ukuran gambar Google Drive tidak valid.", 400)
+  }
+
+  const sourceWidth = requestedWidth ?? "2000"
+
   if (resourceKey && resourceKey.length > 500) {
     return createErrorResponse("Google Drive resource key tidak valid.", 400)
   }
@@ -38,7 +48,7 @@ export async function GET(request: Request, { params }: GoogleDriveMediaRoutePro
   const upstreamUrl = new URL("https://drive.google.com/thumbnail")
 
   upstreamUrl.searchParams.set("id", fileId)
-  upstreamUrl.searchParams.set("sz", "w2000")
+  upstreamUrl.searchParams.set("sz", `w${sourceWidth}`)
 
   if (resourceKey) {
     upstreamUrl.searchParams.set("resourcekey", resourceKey)

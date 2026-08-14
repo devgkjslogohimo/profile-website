@@ -53,6 +53,8 @@ async function PublicChurchServantsPage() {
                     url={pastor.photoUrl}
                     alt={`Foto ${pastor.fullName}`}
                     eager
+                    fetchPriority="high"
+                    sourceWidth={1200}
                     sizes="(max-width: 1024px) 100vw, 380px"
                   />
                 </div>

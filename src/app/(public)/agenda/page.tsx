@@ -249,6 +249,8 @@ async function PublicAgendaPage({ searchParams }: PublicAgendaPageProps) {
                       alt={`Cover ${featured.title}`}
                       className="h-full rounded-none border-0"
                       eager
+                      fetchPriority="high"
+                      sourceWidth={1600}
                     />
                   </Link>
 

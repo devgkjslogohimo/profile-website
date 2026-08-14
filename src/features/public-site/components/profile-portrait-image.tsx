@@ -1,13 +1,15 @@
 import Image from "next/image"
 import { FiUser } from "react-icons/fi"
 
-import { getGoogleDriveMediaUrl } from "@/lib/google-drive"
+import { getGoogleDriveMediaUrl, GoogleDriveSourceWidth } from "@/lib/google-drive"
 
 type ProfilePortraitImageProps = {
   url: string | null
   alt: string
   className?: string
   eager?: boolean
+  fetchPriority?: "high" | "low" | "auto"
+  sourceWidth?: GoogleDriveSourceWidth
   sizes?: string
 }
 
@@ -16,9 +18,13 @@ function ProfilePortraitImage({
   alt,
   className,
   eager = false,
+  fetchPriority = "auto",
+  sourceWidth,
   sizes = "(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 25vw",
 }: ProfilePortraitImageProps) {
-  const imageUrl = url ? getGoogleDriveMediaUrl(url) : null
+  const imageUrl = url
+    ? getGoogleDriveMediaUrl(url, sourceWidth ? { sourceWidth } : undefined)
+    : null
 
   return (
     <div
@@ -33,6 +39,7 @@ function ProfilePortraitImage({
           fill
           sizes={sizes}
           loading={eager ? "eager" : "lazy"}
+          fetchPriority={fetchPriority}
           className="object-cover object-top"
         />
       ) : (

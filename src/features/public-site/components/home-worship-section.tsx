@@ -158,7 +158,7 @@ function HomeWorshipSection({ schedule }: HomeWorshipSectionProps) {
               <div className="flex items-center px-0 py-8 lg:px-12 lg:py-10">
                 <div className="w-full">
                   <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                    <p className="text-xs font-semibold tracking-[0.16em] text-primary-foreground/60 uppercase">
+                    <p className="text-xs font-semibold tracking-[0.16em] text-primary-foreground/70 uppercase">
                       {featuredService.churchLocation.type === "PEPANTHAN" ? "Pepanthan" : "Gereja"}
                     </p>
 
@@ -239,7 +239,7 @@ function HomeWorshipSection({ schedule }: HomeWorshipSectionProps) {
             {otherServices.length > 0 ? (
               <div className="pt-9">
                 <div className="mb-5 flex items-center gap-4">
-                  <p className="shrink-0 text-xs font-semibold tracking-[0.18em] text-primary-foreground/60 uppercase">
+                  <p className="shrink-0 text-xs font-semibold tracking-[0.18em] text-primary-foreground/70 uppercase">
                     Ibadah Lainnya
                   </p>
 
@@ -258,7 +258,7 @@ function HomeWorshipSection({ schedule }: HomeWorshipSectionProps) {
                         className="flex min-h-60 flex-col border border-primary-foreground/15 bg-primary-foreground/5 p-5 transition-colors hover:bg-primary-foreground/8"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-3">
-                          <p className="text-[0.68rem] font-semibold tracking-[0.16em] text-primary-foreground/60 uppercase">
+                          <p className="text-[0.68rem] font-semibold tracking-[0.16em] text-primary-foreground/70 uppercase">
                             {service.churchLocation.type === "PEPANTHAN" ? "Pepanthan" : "Gereja"}
                           </p>
 
@@ -272,7 +272,7 @@ function HomeWorshipSection({ schedule }: HomeWorshipSectionProps) {
                           {service.name}
                         </h3>
 
-                        <p className="mt-2 text-xs font-semibold tracking-widest text-primary-foreground/55 uppercase">
+                        <p className="mt-2 text-xs font-semibold tracking-widest text-primary-foreground/70 uppercase">
                           {language}
                         </p>
 
@@ -312,7 +312,7 @@ function HomeWorshipSection({ schedule }: HomeWorshipSectionProps) {
                                 target="_blank"
                                 rel="noreferrer"
                                 aria-label={`Buka ${service.churchLocation.name} di Google Maps`}
-                                className="inline-flex items-center gap-1.5 text-sm text-primary-foreground/55 transition-colors hover:text-primary-foreground"
+                                className="inline-flex items-center gap-1.5 text-sm text-primary-foreground/70 transition-colors hover:text-primary-foreground"
                               >
                                 Maps
                                 <FiExternalLink aria-hidden="true" className="size-3" />

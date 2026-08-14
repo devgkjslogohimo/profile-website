@@ -76,7 +76,16 @@ function normalizeGoogleDriveUrl(value: string): string | null {
   return url.toString()
 }
 
-function getGoogleDriveMediaUrl(value: string): string | null {
+export type GoogleDriveSourceWidth = 750 | 1000 | 1200 | 1600 | 2000
+
+type GoogleDriveMediaOptions = {
+  sourceWidth?: GoogleDriveSourceWidth
+}
+
+function getGoogleDriveMediaUrl(
+  value: string,
+  options: GoogleDriveMediaOptions = {}
+): string | null {
   const reference = getGoogleDriveFileReference(value)
 
   if (!reference) {
@@ -90,6 +99,10 @@ function getGoogleDriveMediaUrl(value: string): string | null {
 
   if (reference.resourceKey) {
     url.searchParams.set("resourceKey", reference.resourceKey)
+  }
+
+  if (options.sourceWidth !== undefined) {
+    url.searchParams.set("width", String(options.sourceWidth))
   }
 
   return `${url.pathname}${url.search}`

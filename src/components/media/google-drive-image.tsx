@@ -1,22 +1,35 @@
 import { ImageIcon } from "lucide-react"
 import Image from "next/image"
 
-import { getGoogleDriveMediaUrl } from "@/lib/google-drive"
+import { getGoogleDriveMediaUrl, GoogleDriveSourceWidth } from "@/lib/google-drive"
 
 type GoogleDriveImageProps = {
   url: string | null
   alt: string
   className?: string
   eager?: boolean
+  fetchPriority?: "high" | "low" | "auto"
+  sourceWidth?: GoogleDriveSourceWidth
 }
 
-function GoogleDriveImage({ url, alt, className, eager = false }: GoogleDriveImageProps) {
-  const imageUrl = url ? getGoogleDriveMediaUrl(url) : null
+function GoogleDriveImage({
+  url,
+  alt,
+  className,
+  eager = false,
+  fetchPriority = "auto",
+  sourceWidth,
+}: GoogleDriveImageProps) {
+  const imageUrl = url
+    ? getGoogleDriveMediaUrl(url, sourceWidth ? { sourceWidth } : undefined)
+    : null
 
   if (!imageUrl) {
     return (
       <div
-        className={`flex aspect-video w-full items-center justify-center overflow-hidden rounded-xl border bg-muted/30 ${className ?? ""}`}
+        className={`flex aspect-video w-full items-center justify-center overflow-hidden rounded-xl border bg-muted/30 ${
+          className ?? ""
+        }`}
       >
         <div className="text-center text-muted-foreground">
           <ImageIcon className="mx-auto size-6" />
@@ -36,6 +49,7 @@ function GoogleDriveImage({ url, alt, className, eager = false }: GoogleDriveIma
         height={900}
         sizes="(max-width: 768px) 100vw, 50vw"
         loading={eager ? "eager" : "lazy"}
+        fetchPriority={fetchPriority}
         className="aspect-video h-auto w-full object-cover"
       />
     </div>

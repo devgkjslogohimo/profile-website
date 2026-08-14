@@ -29,6 +29,15 @@ const noIndexHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
 
+  images: {
+    localPatterns: [
+      {
+        pathname: "/api/media/google-drive/**",
+      },
+    ],
+    qualities: [75],
+  },
+
   async headers() {
     return [
       {

@@ -45,7 +45,7 @@ async function PublicGalleryPage() {
             />
           ) : (
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {albums.map((album) => {
+              {albums.map((album, index) => {
                 const firstImage = album.images[0]
 
                 const imageUrl = album.coverImageUrl ?? firstImage?.imageUrl ?? null
@@ -62,6 +62,9 @@ async function PublicGalleryPage() {
                       url={imageUrl}
                       alt={altText}
                       className="rounded-none border-0"
+                      eager={index === 0}
+                      fetchPriority={index === 0 ? "high" : "auto"}
+                      sourceWidth={1200}
                     />
 
                     <div className="flex flex-1 flex-col p-5">
