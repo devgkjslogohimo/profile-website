@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { FaEnvelope, FaFacebookF, FaPhone, FaWhatsapp, FaYoutube } from "react-icons/fa"
 
@@ -23,25 +24,33 @@ function PublicFooter({ settings, navigationItems }: PublicFooterProps) {
       <Container className="py-12 md:py-16">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary font-heading text-sm font-semibold text-primary-foreground">
-                GKJ
+            <Link
+              href="/"
+              aria-label={`${settings.siteName} - Beranda`}
+              className="group inline-flex items-center gap-4"
+            >
+              <div className="relative size-16 shrink-0 sm:size-18">
+                <Image
+                  src="/gkj-slogohimo-logo.png"
+                  alt={`Logo ${settings.siteName}`}
+                  fill
+                  sizes="(max-width: 639px) 64px, 72px"
+                  className="object-contain transition-transform duration-300 ease-out group-hover:scale-[1.025] motion-reduce:transition-none"
+                />
               </div>
 
-              <div>
-                <p className="font-heading text-lg font-semibold">{settings.siteName}</p>
+              <div className="min-w-0">
+                <p className="font-heading text-lg font-semibold tracking-tight">
+                  {settings.siteName}
+                </p>
 
                 {settings.tagline ? (
-                  <p className="mt-1 text-sm text-muted-foreground">{settings.tagline}</p>
+                  <p className="mt-1 max-w-md text-sm leading-6 text-muted-foreground">
+                    {settings.tagline}
+                  </p>
                 ) : null}
               </div>
-            </div>
-
-            {settings.description ? (
-              <p className="mt-5 max-w-xl text-sm leading-7 text-muted-foreground">
-                {settings.description}
-              </p>
-            ) : null}
+            </Link>
           </div>
 
           <div>

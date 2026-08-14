@@ -34,6 +34,9 @@ const nextConfig: NextConfig = {
       {
         pathname: "/api/media/google-drive/**",
       },
+      {
+        pathname: "/gkj-slogohimo-logo.png",
+      },
     ],
     qualities: [75],
   },

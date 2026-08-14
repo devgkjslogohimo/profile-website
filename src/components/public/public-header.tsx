@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 
 import { PublicAnnouncementBar } from "@/components/public/public-announcement-bar"
@@ -25,14 +26,25 @@ function PublicHeader({ settings, navigationItems, announcements }: PublicHeader
       <PublicAnnouncementBar announcements={announcements} />
 
       <div className="border-b bg-background/95 backdrop-blur">
-        <Container className="flex h-16 items-center justify-between gap-6 md:h-20">
-          <Link href="/" className="flex min-w-0 items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary font-heading text-sm font-semibold text-primary-foreground">
-              GKJ
+        <Container className="flex h-16 items-center justify-between gap-5 md:h-20">
+          <Link
+            href="/"
+            aria-label={`${settings.siteName} - Beranda`}
+            className="group flex min-w-0 items-center gap-3"
+          >
+            <div className="relative size-12 shrink-0 md:size-14">
+              <Image
+                src="/gkj-slogohimo-logo.png"
+                alt={`Logo ${settings.siteName}`}
+                fill
+                priority
+                sizes="(max-width: 767px) 48px, 56px"
+                className="object-contain transition-transform duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transition-none"
+              />
             </div>
 
             <div className="min-w-0">
-              <p className="truncate font-heading text-base font-semibold md:text-lg">
+              <p className="truncate font-heading text-base font-semibold tracking-tight md:text-lg">
                 {settings.siteName}
               </p>
 
