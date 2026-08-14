@@ -253,7 +253,7 @@ function GalleryBrowser({ albums, initialYear }: GalleryBrowserProps) {
               return (
                 <Link
                   href={`/galeri/${featuredAlbum.slug}`}
-                  className="group relative block min-h-[24rem] overflow-hidden rounded-[2rem] bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none sm:min-h-[30rem] lg:min-h-[34rem]"
+                  className="group relative block min-h-96 overflow-hidden rounded-[2rem] bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none sm:min-h-120 lg:min-h-136"
                 >
                   <GoogleDriveImage
                     url={image.url}
@@ -266,7 +266,7 @@ function GalleryBrowser({ albums, initialYear }: GalleryBrowserProps) {
 
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/5"
+                    className="absolute inset-0 bg-linear-to-t from-black/80 via-black/15 to-black/5"
                   />
 
                   <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-8 lg:p-10">
@@ -315,7 +315,7 @@ function GalleryBrowser({ albums, initialYear }: GalleryBrowserProps) {
               </h2>
             </div>
 
-            <div className="grid gap-4 lg:auto-rows-[12rem] lg:grid-cols-12">
+            <div className="grid gap-4 lg:auto-rows-48 lg:grid-cols-12">
               {selectedAlbums.map((album, index) => {
                 const image = getAlbumImage(album)
 
@@ -333,7 +333,7 @@ function GalleryBrowser({ albums, initialYear }: GalleryBrowserProps) {
                   <Link
                     key={album.id}
                     href={`/galeri/${album.slug}`}
-                    className={`group relative min-h-[19rem] overflow-hidden rounded-2xl bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none sm:min-h-[22rem] lg:min-h-0 ${layoutClass}`}
+                    className={`group relative min-h-76 overflow-hidden rounded-2xl bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none sm:min-h-88 lg:min-h-0 ${layoutClass}`}
                   >
                     <GoogleDriveImage
                       url={image.url}
@@ -345,7 +345,7 @@ function GalleryBrowser({ albums, initialYear }: GalleryBrowserProps) {
 
                     <div
                       aria-hidden="true"
-                      className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent"
+                      className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-transparent"
                     />
 
                     <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-6">

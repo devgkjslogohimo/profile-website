@@ -6,6 +6,7 @@ import { PublicBackLink } from "@/components/public/public-back-link"
 import { PublicDetailHeader } from "@/components/public/public-detail-header"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
+import { PawartosPdfPreview } from "@/features/public-site/components/pawartos-pdf-preview"
 import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import {
   getPublishedPawartosBySlug,
@@ -113,26 +114,7 @@ async function PublicPawartosDetailPage({ params }: PublicPawartosDetailPageProp
                 </div>
 
                 {previewUrl ? (
-                  <section aria-labelledby="preview-pawartos" className="mt-8">
-                    <div className="mb-4 flex items-center justify-between gap-4">
-                      <h2 id="preview-pawartos" className="font-heading text-xl font-medium">
-                        Preview Pawartos
-                      </h2>
-
-                      <p className="hidden text-xs text-muted-foreground sm:block">
-                        Gunakan tombol PDF jika preview sulit dibuka.
-                      </p>
-                    </div>
-
-                    <div className="overflow-hidden rounded-2xl border border-border/70 bg-muted/20">
-                      <iframe
-                        src={previewUrl}
-                        title={pawartos.title}
-                        loading="lazy"
-                        className="h-[72vh] min-h-128 w-full"
-                      />
-                    </div>
-                  </section>
+                  <PawartosPdfPreview previewUrl={previewUrl} title={pawartos.title} />
                 ) : null}
               </div>
 
