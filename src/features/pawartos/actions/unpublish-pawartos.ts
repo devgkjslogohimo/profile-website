@@ -1,9 +1,10 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import type { PawartosPublicationActionResult } from "@/features/pawartos/lib/pawartos-publication-action-state"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 
 async function unpublishPawartos(id: string): Promise<PawartosPublicationActionResult> {
@@ -55,6 +56,10 @@ async function unpublishPawartos(id: string): Promise<PawartosPublicationActionR
 
   revalidatePath("/admin/pawartos")
   revalidatePath(`/admin/pawartos/${id}/edit`)
+
+  updateTag(PUBLIC_CACHE_TAGS.pawartos)
+
+  revalidatePath("/")
   revalidatePath("/pawartos")
   revalidatePath(`/pawartos/${pawartos.slug}`)
 

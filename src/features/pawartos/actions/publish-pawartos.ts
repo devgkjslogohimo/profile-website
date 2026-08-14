@@ -1,9 +1,10 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import type { PawartosPublicationActionResult } from "@/features/pawartos/lib/pawartos-publication-action-state"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 
 async function publishPawartos(id: string): Promise<PawartosPublicationActionResult> {
@@ -56,10 +57,9 @@ async function publishPawartos(id: string): Promise<PawartosPublicationActionRes
   revalidatePath("/admin/pawartos")
   revalidatePath(`/admin/pawartos/${id}/edit`)
 
-  /*
-   * Route publik belum dibangun, tetapi path ini memang akan
-   * menjadi target publik Pawartos pada milestone public.
-   */
+  updateTag(PUBLIC_CACHE_TAGS.pawartos)
+
+  revalidatePath("/")
   revalidatePath("/pawartos")
   revalidatePath(`/pawartos/${pawartos.slug}`)
 

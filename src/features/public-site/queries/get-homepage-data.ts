@@ -3,6 +3,8 @@ import { cache } from "react"
 import { getWibTodayDate } from "@/features/public-site/lib/public-date"
 import { prisma } from "@/lib/db/prisma"
 
+import { getHomepagePublishedPawartos } from "./get-public-pawartos"
+
 const getHomepageData = cache(async () => {
   const now = new Date()
   const today = getWibTodayDate(now)
@@ -173,30 +175,7 @@ const getHomepageData = cache(async () => {
       take: 4,
     }),
 
-    prisma.pawartos.findMany({
-      where: {
-        status: "PUBLISHED",
-      },
-
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        publicationDate: true,
-        description: true,
-      },
-
-      orderBy: [
-        {
-          publicationDate: "desc",
-        },
-        {
-          createdAt: "desc",
-        },
-      ],
-
-      take: 3,
-    }),
+    getHomepagePublishedPawartos(),
   ])
 
   return {

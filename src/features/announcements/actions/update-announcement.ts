@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import {
@@ -10,6 +10,7 @@ import {
 import { canEditAnnouncement } from "@/features/announcements/lib/announcement-permissions"
 import { createAnnouncementSlug } from "@/features/announcements/lib/announcement-slug"
 import { announcementFormSchema } from "@/features/announcements/schemas/announcement-schema"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/lib/db/prisma"
 
@@ -163,6 +164,10 @@ async function updateAnnouncement(
 
   revalidatePath("/admin/pengumuman")
   revalidatePath(`/admin/pengumuman/${id}/edit`)
+
+  if (existingAnnouncement.status === "PUBLISHED") {
+    updateTag(PUBLIC_CACHE_TAGS.announcements)
+  }
 
   revalidatePath("/")
   revalidatePath("/pengumuman")

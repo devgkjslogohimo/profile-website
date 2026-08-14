@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import {
@@ -10,6 +10,7 @@ import {
 import { canEditPawartos } from "@/features/pawartos/lib/pawartos-permissions"
 import { createPawartosSlug } from "@/features/pawartos/lib/pawartos-slug"
 import { pawartosFormSchema } from "@/features/pawartos/schemas/pawartos-schema"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 import { getGoogleDriveFileId, normalizeGoogleDriveUrl } from "@/lib/google-drive"
 
@@ -193,6 +194,14 @@ async function updatePawartos(
 
   revalidatePath("/admin/pawartos")
   revalidatePath(`/admin/pawartos/${id}/edit`)
+
+  if (existingPawartos.status === "PUBLISHED") {
+    updateTag(PUBLIC_CACHE_TAGS.pawartos)
+
+    revalidatePath("/")
+    revalidatePath("/pawartos")
+    revalidatePath(`/pawartos/${slug}`)
+  }
 
   return {
     status: "success",

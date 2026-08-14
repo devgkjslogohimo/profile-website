@@ -1,9 +1,10 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import type { AnnouncementPublicationActionResult } from "@/features/announcements/lib/announcement-publication-action-state"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 import { isRichTextContent, isRichTextEmpty } from "@/lib/rich-text"
 
@@ -71,9 +72,10 @@ async function publishAnnouncement(id: string): Promise<AnnouncementPublicationA
       message: "Pengumuman gagal dipublikasikan. Silakan coba kembali.",
     }
   }
-
   revalidatePath("/admin/pengumuman")
   revalidatePath(`/admin/pengumuman/${id}/edit`)
+
+  updateTag(PUBLIC_CACHE_TAGS.announcements)
 
   revalidatePath("/")
   revalidatePath("/pengumuman")
