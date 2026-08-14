@@ -66,6 +66,57 @@ const getPublishedNews = cache(async () => {
   return items.map(hydratePublishedAt)
 })
 
+async function findHomepagePublishedNews() {
+  return prisma.news.findMany({
+    where: {
+      status: "PUBLISHED",
+
+      publishedAt: {
+        not: null,
+      },
+    },
+
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      excerpt: true,
+      coverImageUrl: true,
+      publishedAt: true,
+    },
+
+    orderBy: [
+      {
+        publishedAt: "desc",
+      },
+      {
+        createdAt: "desc",
+      },
+    ],
+
+    take: 3,
+  })
+}
+
+const getCachedHomepagePublishedNews = unstable_cache(
+  async () => {
+    const items = await findHomepagePublishedNews()
+
+    return items.map(serializePublishedAt)
+  },
+  ["public-homepage-published-news-v1"],
+  {
+    revalidate: PUBLIC_NEWS_REVALIDATE_SECONDS,
+    tags: [PUBLIC_CACHE_TAGS.news],
+  }
+)
+
+const getHomepagePublishedNews = cache(async () => {
+  const items = await getCachedHomepagePublishedNews()
+
+  return items.map(hydratePublishedAt)
+})
+
 async function findPublishedNewsBySlug(slug: string) {
   return prisma.news.findFirst({
     where: {
@@ -296,4 +347,10 @@ const getRecentPublishedNews = cache(async (excludeSlug: string) => {
   return items.map(hydratePublishedAt)
 })
 
-export { getPublishedNews, getPublishedNewsBySlug, getPublishedNewsPage, getRecentPublishedNews }
+export {
+  getHomepagePublishedNews,
+  getPublishedNews,
+  getPublishedNewsBySlug,
+  getPublishedNewsPage,
+  getRecentPublishedNews,
+}

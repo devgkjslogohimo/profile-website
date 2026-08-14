@@ -1,9 +1,10 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import type { AgendaPublicationActionResult } from "@/features/agenda/lib/agenda-publication-action-state"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 import { isRichTextContent, isRichTextEmpty } from "@/lib/rich-text"
 
@@ -100,10 +101,9 @@ async function publishAgenda(id: string): Promise<AgendaPublicationActionResult>
   revalidatePath("/admin/agenda")
   revalidatePath(`/admin/agenda/${id}/edit`)
 
-  /*
-   * Route publik belum dibuat pada M4.17.
-   * Revalidation disiapkan seperti pola Berita.
-   */
+  updateTag(PUBLIC_CACHE_TAGS.agendas)
+
+  revalidatePath("/")
   revalidatePath("/agenda")
   revalidatePath(`/agenda/${agenda.slug}`)
 

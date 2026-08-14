@@ -1,8 +1,9 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import type { SitePagePublicationActionResult } from "@/features/site-pages/lib/site-page-publication-action-state"
 import { prisma } from "@/lib/db/prisma"
 
@@ -58,6 +59,9 @@ async function unpublishSitePage(id: string): Promise<SitePagePublicationActionR
   revalidatePath("/admin/halaman")
 
   revalidatePath(`/admin/halaman/${id}/edit`)
+
+  updateTag(PUBLIC_CACHE_TAGS.sitePages)
+  updateTag(PUBLIC_CACHE_TAGS.navigation)
 
   revalidatePath(`/${sitePage.slug}`)
 

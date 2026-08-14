@@ -1,8 +1,9 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 
 type ReorderDirection = "up" | "down"
@@ -98,6 +99,11 @@ async function reorderGalleryAlbum(id: string, direction: ReorderDirection) {
   }
 
   revalidatePath("/admin/galeri")
+
+  updateTag(PUBLIC_CACHE_TAGS.gallery)
+
+  revalidatePath("/")
+  revalidatePath("/galeri", "layout")
 
   return {
     success: true,

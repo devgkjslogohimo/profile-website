@@ -1,23 +1,51 @@
+import { unstable_cache } from "next/cache"
 import { cache } from "react"
 
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
+import { getWibTodayDate } from "@/features/public-site/lib/public-date"
 import { prisma } from "@/lib/db/prisma"
 
-const wibDateFormatter = new Intl.DateTimeFormat("en-US", {
-  timeZone: "Asia/Jakarta",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-})
+const PUBLIC_CHURCH_LOCATION_REVALIDATE_SECONDS = 300
 
-function getWibTodayDate() {
-  const parts = Object.fromEntries(
-    wibDateFormatter.formatToParts(new Date()).map((part) => [part.type, part.value])
-  )
+function serializeChurchLocationCouncilDates<
+  T extends {
+    councilMembers: Array<{
+      periodStart: Date
+      periodEnd: Date | null
+    }>
+  },
+>(item: T) {
+  return {
+    ...item,
 
-  return new Date(`${parts.year}-${parts.month}-${parts.day}T00:00:00.000Z`)
+    councilMembers: item.councilMembers.map((member) => ({
+      ...member,
+      periodStart: member.periodStart.toISOString(),
+      periodEnd: member.periodEnd?.toISOString() ?? null,
+    })),
+  }
 }
 
-const getPublicChurchLocationBySlug = cache(async (slug: string) => {
+function hydrateChurchLocationCouncilDates<
+  T extends {
+    councilMembers: Array<{
+      periodStart: string
+      periodEnd: string | null
+    }>
+  },
+>(item: T) {
+  return {
+    ...item,
+
+    councilMembers: item.councilMembers.map((member) => ({
+      ...member,
+      periodStart: new Date(member.periodStart),
+      periodEnd: member.periodEnd ? new Date(member.periodEnd) : null,
+    })),
+  }
+}
+
+async function findPublicChurchLocationBySlug(slug: string) {
   const today = getWibTodayDate()
 
   return prisma.churchLocation.findFirst({
@@ -100,9 +128,28 @@ const getPublicChurchLocationBySlug = cache(async (slug: string) => {
       },
     },
   })
+}
+
+const getCachedPublicChurchLocationBySlug = unstable_cache(
+  async (slug: string) => {
+    const location = await findPublicChurchLocationBySlug(slug)
+
+    return location ? serializeChurchLocationCouncilDates(location) : null
+  },
+  ["public-church-location-by-slug-v1"],
+  {
+    revalidate: PUBLIC_CHURCH_LOCATION_REVALIDATE_SECONDS,
+    tags: [PUBLIC_CACHE_TAGS.churchLocations],
+  }
+)
+
+const getPublicChurchLocationBySlug = cache(async (slug: string) => {
+  const location = await getCachedPublicChurchLocationBySlug(slug)
+
+  return location ? hydrateChurchLocationCouncilDates(location) : null
 })
 
-const getPublicChurchLocations = cache(async () => {
+async function findPublicChurchLocations() {
   return prisma.churchLocation.findMany({
     where: {
       isActive: true,
@@ -129,6 +176,19 @@ const getPublicChurchLocations = cache(async () => {
       },
     ],
   })
+}
+
+const getCachedPublicChurchLocations = unstable_cache(
+  findPublicChurchLocations,
+  ["public-church-locations-v1"],
+  {
+    revalidate: PUBLIC_CHURCH_LOCATION_REVALIDATE_SECONDS,
+    tags: [PUBLIC_CACHE_TAGS.churchLocations],
+  }
+)
+
+const getPublicChurchLocations = cache(async () => {
+  return getCachedPublicChurchLocations()
 })
 
 export { getPublicChurchLocationBySlug, getPublicChurchLocations }

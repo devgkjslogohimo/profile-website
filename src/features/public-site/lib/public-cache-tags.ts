@@ -9,6 +9,7 @@ const PUBLIC_CACHE_TAGS = {
   churchLocations: "public:church-locations",
   churchServants: "public:church-servants",
 
+  sitePages: "public:site-pages",
   navigation: "public:navigation",
   siteSettings: "public:site-settings",
   heroSlides: "public:hero-slides",

@@ -1,8 +1,9 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 
 async function toggleChurchPastor(id: string) {
@@ -45,6 +46,9 @@ async function toggleChurchPastor(id: string) {
   }
 
   revalidatePath("/admin/pendeta")
+
+  updateTag(PUBLIC_CACHE_TAGS.churchServants)
+  revalidatePath("/pelayan", "layout")
 
   return {
     success: true,

@@ -1,8 +1,38 @@
+import { unstable_cache } from "next/cache"
 import { cache } from "react"
 
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 
-const getPublicChurchServants = cache(async () => {
+const PUBLIC_CHURCH_SERVANTS_REVALIDATE_SECONDS = 300
+
+function serializeServicePeriod<
+  T extends {
+    periodStart: Date
+    periodEnd: Date | null
+  },
+>(item: T) {
+  return {
+    ...item,
+    periodStart: item.periodStart.toISOString(),
+    periodEnd: item.periodEnd?.toISOString() ?? null,
+  }
+}
+
+function hydrateServicePeriod<
+  T extends {
+    periodStart: string
+    periodEnd: string | null
+  },
+>(item: T) {
+  return {
+    ...item,
+    periodStart: new Date(item.periodStart),
+    periodEnd: item.periodEnd ? new Date(item.periodEnd) : null,
+  }
+}
+
+async function findPublicChurchServants() {
   const today = new Date()
 
   const [pastor, councilLocations] = await Promise.all([
@@ -143,9 +173,42 @@ const getPublicChurchServants = cache(async () => {
     pastor,
     councilGroups,
   }
+}
+
+const getCachedPublicChurchServants = unstable_cache(
+  async () => {
+    const result = await findPublicChurchServants()
+
+    return {
+      pastor: result.pastor ? serializeServicePeriod(result.pastor) : null,
+
+      councilGroups: result.councilGroups.map((group) => ({
+        ...group,
+        members: group.members.map(serializeServicePeriod),
+      })),
+    }
+  },
+  ["public-church-servants-v1"],
+  {
+    revalidate: PUBLIC_CHURCH_SERVANTS_REVALIDATE_SECONDS,
+    tags: [PUBLIC_CACHE_TAGS.churchServants],
+  }
+)
+
+const getPublicChurchServants = cache(async () => {
+  const result = await getCachedPublicChurchServants()
+
+  return {
+    pastor: result.pastor ? hydrateServicePeriod(result.pastor) : null,
+
+    councilGroups: result.councilGroups.map((group) => ({
+      ...group,
+      members: group.members.map(hydrateServicePeriod),
+    })),
+  }
 })
 
-const getPublicChurchPastorBySlug = cache(async (slug: string) => {
+async function findPublicChurchPastorBySlug(slug: string) {
   return prisma.churchPastor.findFirst({
     where: {
       slug,
@@ -163,6 +226,25 @@ const getPublicChurchPastorBySlug = cache(async (slug: string) => {
       photoUrl: true,
     },
   })
+}
+
+const getCachedPublicChurchPastorBySlug = unstable_cache(
+  async (slug: string) => {
+    const pastor = await findPublicChurchPastorBySlug(slug)
+
+    return pastor ? serializeServicePeriod(pastor) : null
+  },
+  ["public-church-pastor-by-slug-v1"],
+  {
+    revalidate: PUBLIC_CHURCH_SERVANTS_REVALIDATE_SECONDS,
+    tags: [PUBLIC_CACHE_TAGS.churchServants],
+  }
+)
+
+const getPublicChurchPastorBySlug = cache(async (slug: string) => {
+  const pastor = await getCachedPublicChurchPastorBySlug(slug)
+
+  return pastor ? hydrateServicePeriod(pastor) : null
 })
 
 export { getPublicChurchPastorBySlug, getPublicChurchServants }

@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import {
@@ -11,6 +11,7 @@ import { createAgendaDateTime } from "@/features/agenda/lib/agenda-date-time"
 import { canEditAgenda } from "@/features/agenda/lib/agenda-permissions"
 import { createAgendaSlug } from "@/features/agenda/lib/agenda-slug"
 import { agendaFormSchema } from "@/features/agenda/schemas/agenda-schema"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/lib/db/prisma"
 import { getGoogleDriveFileId, normalizeGoogleDriveUrl } from "@/lib/google-drive"
@@ -199,6 +200,14 @@ async function updateAgenda(
 
   revalidatePath("/admin/agenda")
   revalidatePath(`/admin/agenda/${id}/edit`)
+
+  if (existingAgenda.status === "PUBLISHED") {
+    updateTag(PUBLIC_CACHE_TAGS.agendas)
+
+    revalidatePath("/")
+    revalidatePath("/agenda")
+    revalidatePath(`/agenda/${existingAgenda.slug}`)
+  }
 
   return {
     status: "success",

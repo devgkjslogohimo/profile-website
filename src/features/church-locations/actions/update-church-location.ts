@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import type {
@@ -12,6 +12,7 @@ import {
   churchLocationFormSchema,
   churchLocationSlugSchema,
 } from "@/features/church-locations/schemas/church-location-schema"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 import { createMediaAltText } from "@/lib/media-alt-text"
 
@@ -169,6 +170,15 @@ async function updateChurchLocation(
 
   revalidatePath("/admin/lokasi")
   revalidatePath(`/admin/lokasi/${id}/edit`)
+
+  updateTag(PUBLIC_CACHE_TAGS.worshipSchedules)
+  updateTag(PUBLIC_CACHE_TAGS.churchLocations)
+  updateTag(PUBLIC_CACHE_TAGS.churchServants)
+
+  revalidatePath("/")
+  revalidatePath("/jadwal-ibadah", "layout")
+  revalidatePath("/lokasi", "layout")
+  revalidatePath("/pelayan")
 
   return {
     status: "success",

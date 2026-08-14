@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import type {
@@ -12,6 +12,7 @@ import {
   churchLocationFormSchema,
   churchLocationSlugSchema,
 } from "@/features/church-locations/schemas/church-location-schema"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 
 function getFieldErrors(
@@ -121,6 +122,9 @@ async function createChurchLocation(
   }
 
   revalidatePath("/admin/lokasi")
+
+  updateTag(PUBLIC_CACHE_TAGS.churchLocations)
+  revalidatePath("/lokasi", "layout")
 
   return {
     status: "success",

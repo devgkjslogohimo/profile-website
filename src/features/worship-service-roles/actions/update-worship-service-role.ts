@@ -1,8 +1,9 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import type {
   WorshipServiceRoleActionState,
   WorshipServiceRoleField,
@@ -117,6 +118,9 @@ async function updateWorshipServiceRole(
 
   revalidatePath("/admin/peran-petugas-ibadah")
   revalidatePath(`/admin/peran-petugas-ibadah/${id}/edit`)
+
+  updateTag(PUBLIC_CACHE_TAGS.worshipSchedules)
+  revalidatePath("/jadwal-ibadah", "layout")
 
   return {
     status: "success",

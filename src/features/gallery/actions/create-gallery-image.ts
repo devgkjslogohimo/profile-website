@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import {
@@ -8,6 +8,7 @@ import {
   getGalleryImageFieldErrors,
 } from "@/features/gallery/lib/gallery-image-action-state"
 import { galleryImageFormSchema } from "@/features/gallery/schemas/gallery-image-schema"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 import { getGoogleDriveFileId, normalizeGoogleDriveUrl } from "@/lib/google-drive"
 
@@ -116,6 +117,11 @@ async function createGalleryImage(
 
   revalidatePath("/admin/galeri")
   revalidatePath(`/admin/galeri/${albumId}`)
+
+  updateTag(PUBLIC_CACHE_TAGS.gallery)
+
+  revalidatePath("/")
+  revalidatePath("/galeri", "layout")
 
   return {
     status: "success",

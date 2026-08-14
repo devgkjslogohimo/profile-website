@@ -1,6 +1,10 @@
+import { unstable_cache } from "next/cache"
 import { cache } from "react"
 
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
+
+const PUBLIC_NAVIGATION_REVALIDATE_SECONDS = 300
 
 type PublicCmsNavigationItem = {
   id: string
@@ -10,7 +14,7 @@ type PublicCmsNavigationItem = {
   navigationOrder: number
 }
 
-const getPublicNavigationPages = cache(async (): Promise<PublicCmsNavigationItem[]> => {
+async function findPublicNavigationPages(): Promise<PublicCmsNavigationItem[]> {
   const pages = await prisma.sitePage.findMany({
     where: {
       status: "PUBLISHED",
@@ -54,6 +58,19 @@ const getPublicNavigationPages = cache(async (): Promise<PublicCmsNavigationItem
       },
     ]
   })
+}
+
+const getCachedPublicNavigationPages = unstable_cache(
+  findPublicNavigationPages,
+  ["public-navigation-pages-v1"],
+  {
+    revalidate: PUBLIC_NAVIGATION_REVALIDATE_SECONDS,
+    tags: [PUBLIC_CACHE_TAGS.navigation],
+  }
+)
+
+const getPublicNavigationPages = cache(async (): Promise<PublicCmsNavigationItem[]> => {
+  return getCachedPublicNavigationPages()
 })
 
 export { getPublicNavigationPages }

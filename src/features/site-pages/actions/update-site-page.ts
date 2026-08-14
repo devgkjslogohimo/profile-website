@@ -1,8 +1,9 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import {
   getSitePageFieldErrors,
   type SitePageActionState,
@@ -188,6 +189,11 @@ async function updateSitePage(
 
   revalidatePath("/admin/halaman")
   revalidatePath(`/admin/halaman/${id}/edit`)
+
+  if (existingPage.status === "PUBLISHED") {
+    updateTag(PUBLIC_CACHE_TAGS.sitePages)
+    updateTag(PUBLIC_CACHE_TAGS.navigation)
+  }
 
   /*
    * Route publik CMS belum dibangun.

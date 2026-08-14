@@ -1,9 +1,10 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import type { AgendaPublicationActionResult } from "@/features/agenda/lib/agenda-publication-action-state"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 
 async function unpublishAgenda(id: string): Promise<AgendaPublicationActionResult> {
@@ -58,6 +59,9 @@ async function unpublishAgenda(id: string): Promise<AgendaPublicationActionResul
   revalidatePath("/admin/agenda")
   revalidatePath(`/admin/agenda/${id}/edit`)
 
+  updateTag(PUBLIC_CACHE_TAGS.agendas)
+
+  revalidatePath("/")
   revalidatePath("/agenda")
   revalidatePath(`/agenda/${agenda.slug}`)
 

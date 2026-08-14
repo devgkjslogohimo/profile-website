@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import {
@@ -8,6 +8,7 @@ import {
   type HeroSlideActionState,
 } from "@/features/hero-slides/lib/hero-slide-action-state"
 import { heroSlideFormSchema } from "@/features/hero-slides/schemas/hero-slide-schema"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 import { getGoogleDriveFileId, normalizeGoogleDriveUrl } from "@/lib/google-drive"
 
@@ -61,6 +62,7 @@ async function saveHeroSlideSlot(
     }
 
     revalidatePath("/admin/pengaturan")
+    updateTag(PUBLIC_CACHE_TAGS.heroSlides)
     revalidatePath("/")
 
     return {
@@ -144,6 +146,7 @@ async function saveHeroSlideSlot(
   }
 
   revalidatePath("/admin/pengaturan")
+  updateTag(PUBLIC_CACHE_TAGS.heroSlides)
   revalidatePath("/")
 
   return {

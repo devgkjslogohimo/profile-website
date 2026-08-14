@@ -1,9 +1,10 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import type { ToggleChurchLocationActionState } from "@/features/church-locations/lib/toggle-action-state"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 
 async function toggleChurchLocation(
@@ -53,6 +54,14 @@ async function toggleChurchLocation(
 
   revalidatePath("/admin/lokasi")
   revalidatePath(`/admin/lokasi/${location.id}/edit`)
+
+  updateTag(PUBLIC_CACHE_TAGS.worshipSchedules)
+  updateTag(PUBLIC_CACHE_TAGS.churchLocations)
+  updateTag(PUBLIC_CACHE_TAGS.churchServants)
+
+  revalidatePath("/jadwal-ibadah", "layout")
+  revalidatePath("/lokasi", "layout")
+  revalidatePath("/pelayan")
 
   return {
     status: "success",

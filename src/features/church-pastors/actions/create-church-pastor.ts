@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import {
@@ -10,6 +10,7 @@ import {
 import { findOverlappingChurchPastor } from "@/features/church-pastors/lib/find-overlapping-church-pastor"
 import { createChurchPastorSlug } from "@/features/church-pastors/lib/slug"
 import { churchPastorFormSchema } from "@/features/church-pastors/schemas/church-pastor-schema"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 import { normalizeGoogleDriveUrl } from "@/lib/google-drive"
 
@@ -119,6 +120,9 @@ async function createChurchPastor(
   }
 
   revalidatePath("/admin/pendeta")
+
+  updateTag(PUBLIC_CACHE_TAGS.churchServants)
+  revalidatePath("/pelayan", "layout")
 
   return {
     status: "success",

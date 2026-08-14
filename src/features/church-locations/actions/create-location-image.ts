@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
 import {
@@ -8,6 +8,7 @@ import {
   type LocationImageActionState,
 } from "@/features/church-locations/lib/location-media-action-state"
 import { churchLocationImageFormSchema } from "@/features/church-locations/schemas/church-location-media-schema"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 import { getGoogleDriveFileId, normalizeGoogleDriveUrl } from "@/lib/google-drive"
 import { createMediaAltText } from "@/lib/media-alt-text"
@@ -124,6 +125,9 @@ async function createLocationImage(
   })
 
   revalidatePath(`/admin/lokasi/${location.id}/edit`)
+
+  updateTag(PUBLIC_CACHE_TAGS.churchLocations)
+  revalidatePath("/lokasi", "layout")
 
   return {
     status: "success",

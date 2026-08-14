@@ -1,8 +1,9 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import {
   getWebsiteSettingFieldErrors,
   type WebsiteSettingActionState,
@@ -76,6 +77,9 @@ async function updateWebsiteSetting(
   }
 
   revalidatePath("/admin/pengaturan")
+
+  updateTag(PUBLIC_CACHE_TAGS.siteSettings)
+  revalidatePath("/", "layout")
 
   return {
     status: "success",

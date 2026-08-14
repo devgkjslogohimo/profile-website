@@ -1,8 +1,9 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import type { WorshipSchedulePublicationActionState } from "@/features/worship-schedules/lib/publication-action-state"
 import { prisma } from "@/lib/db/prisma"
 
@@ -166,7 +167,11 @@ async function publishWorshipSchedule(
 
   revalidatePath("/admin/jadwal-ibadah")
   revalidatePath(`/admin/jadwal-ibadah/${id}`)
+
+  updateTag(PUBLIC_CACHE_TAGS.worshipSchedules)
+
   revalidatePath("/")
+  revalidatePath("/jadwal-ibadah", "layout")
 
   return {
     status: "success",

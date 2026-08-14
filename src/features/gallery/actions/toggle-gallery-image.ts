@@ -1,8 +1,9 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, updateTag } from "next/cache"
 
 import { requirePermission } from "@/dal/auth"
+import { PUBLIC_CACHE_TAGS } from "@/features/public-site/lib/public-cache-tags"
 import { prisma } from "@/lib/db/prisma"
 
 async function toggleGalleryImage(id: string) {
@@ -48,6 +49,11 @@ async function toggleGalleryImage(id: string) {
   revalidatePath("/admin/galeri")
   revalidatePath(`/admin/galeri/${image.albumId}`)
   revalidatePath(`/admin/galeri/${image.albumId}/foto/${id}/edit`)
+
+  updateTag(PUBLIC_CACHE_TAGS.gallery)
+
+  revalidatePath("/")
+  revalidatePath("/galeri", "layout")
 
   const imageName = image.caption || "Foto"
 
