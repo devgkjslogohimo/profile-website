@@ -39,6 +39,7 @@ const nextConfig: NextConfig = {
       },
     ],
     qualities: [60, 75],
+    minimumCacheTTL: 86400,
   },
 
   async headers() {

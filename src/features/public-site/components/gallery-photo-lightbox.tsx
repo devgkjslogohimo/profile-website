@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { lazy, Suspense, useMemo, useState } from "react"
 import { FiMaximize2 } from "react-icons/fi"
 
@@ -29,19 +30,7 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
   const resolvedImages = useMemo(
     () =>
       images.flatMap((image, index) => {
-        const thumbnail500 = getGoogleDriveMediaUrl(image.imageUrl, {
-          sourceWidth: 500,
-        })
-
-        const thumbnail750 = getGoogleDriveMediaUrl(image.imageUrl, {
-          sourceWidth: 750,
-        })
-
-        const thumbnail1000 = getGoogleDriveMediaUrl(image.imageUrl, {
-          sourceWidth: 1000,
-        })
-
-        const thumbnail1200 = getGoogleDriveMediaUrl(image.imageUrl, {
+        const thumbnailSrc = getGoogleDriveMediaUrl(image.imageUrl, {
           sourceWidth: 1200,
         })
 
@@ -49,7 +38,7 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
           sourceWidth: 2000,
         })
 
-        if (!thumbnail500 || !thumbnail750 || !thumbnail1000 || !thumbnail1200 || !fullSrc) {
+        if (!thumbnailSrc || !fullSrc) {
           return []
         }
 
@@ -58,13 +47,7 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
         return [
           {
             id: image.id,
-            thumbnail500,
-            thumbnailSrc: thumbnail1000,
-            thumbnailSrcSet: [
-              `${thumbnail750} 750w`,
-              `${thumbnail1000} 1000w`,
-              `${thumbnail1200} 1200w`,
-            ].join(", "),
+            thumbnailSrc,
             fullSrc,
             alt,
             caption: image.caption,
@@ -73,6 +56,7 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
       }),
     [albumTitle, images]
   )
+
   const lightboxSlides = useMemo(
     () =>
       resolvedImages.map((image) => ({
@@ -89,7 +73,7 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
 
   return (
     <>
-      <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {resolvedImages.map((image, index) => {
           const isFirstImage = index === 0
 
@@ -99,22 +83,18 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
               type="button"
               onClick={() => setActiveIndex(index)}
               aria-label={`Perbesar ${image.alt}`}
-              className="group relative mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl text-left focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
+              className="group relative aspect-4/3 overflow-hidden rounded-2xl text-left focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
             >
-              <picture>
-                <source media="(max-width: 639px)" srcSet={image.thumbnail500} />
-
-                <img
-                  src={image.thumbnailSrc}
-                  srcSet={image.thumbnailSrcSet}
-                  sizes="(max-width: 1023px) calc(50vw - 2rem), calc(33.333vw - 2rem)"
-                  alt={image.alt}
-                  loading={isFirstImage ? "eager" : "lazy"}
-                  fetchPriority={isFirstImage ? "high" : "auto"}
-                  decoding={isFirstImage ? "sync" : "async"}
-                  className="h-auto w-full transition-transform duration-300 ease-out group-hover:scale-[1.015] motion-reduce:transition-none"
-                />
-              </picture>
+              <Image
+                src={image.thumbnailSrc}
+                alt={image.alt}
+                fill
+                sizes="(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1023px) calc(50vw - 2.5rem), calc(33.333vw - 2rem)"
+                quality={60}
+                loading={isFirstImage ? "eager" : "lazy"}
+                fetchPriority={isFirstImage ? "high" : "auto"}
+                className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.015] motion-reduce:transition-none"
+              />
 
               <span className="pointer-events-none absolute top-3 right-3 flex size-9 items-center justify-center rounded-full bg-black/55 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                 <FiMaximize2 aria-hidden="true" className="size-4" />
