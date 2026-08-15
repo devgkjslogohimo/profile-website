@@ -204,7 +204,7 @@ async function PublicAgendaPage({ searchParams }: PublicAgendaPageProps) {
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicPageHeader
             eyebrow="Kegiatan Gereja"

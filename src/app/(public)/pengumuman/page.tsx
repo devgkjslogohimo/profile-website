@@ -101,7 +101,7 @@ async function PublicAnnouncementsPage({ searchParams }: PublicAnnouncementsPage
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicPageHeader
             eyebrow="Informasi Resmi"

@@ -20,7 +20,7 @@ async function PublicChurchLocationsPage() {
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <header className="max-w-3xl">
             <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">

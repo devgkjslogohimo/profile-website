@@ -116,7 +116,7 @@ async function PublicAgendaDetailPage({ params }: PublicAgendaDetailPageProps) {
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicBackLink href="/agenda" label="Kembali ke Agenda" />
 

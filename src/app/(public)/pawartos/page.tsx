@@ -152,7 +152,7 @@ async function PublicPawartosPage({ searchParams }: PublicPawartosPageProps) {
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicPageHeader
             eyebrow="Informasi Jemaat"

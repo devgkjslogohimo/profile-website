@@ -65,7 +65,7 @@ async function PublicGalleryPage({ searchParams }: PublicGalleryPageProps) {
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicPageHeader
             eyebrow="Dokumentasi"

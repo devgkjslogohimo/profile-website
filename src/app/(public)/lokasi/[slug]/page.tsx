@@ -58,7 +58,7 @@ async function PublicChurchLocationPage({ params }: PublicChurchLocationPageProp
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicBackLink href="/lokasi" label="Kembali ke Lokasi" />
 

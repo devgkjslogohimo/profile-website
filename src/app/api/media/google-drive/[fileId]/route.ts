@@ -33,7 +33,7 @@ export async function GET(request: Request, { params }: GoogleDriveMediaRoutePro
 
   const requestedWidth = requestUrl.searchParams.get("width")?.trim()
 
-  const allowedWidths = new Set(["750", "1000", "1200", "1600", "2000"])
+  const allowedWidths = new Set(["500", "750", "1000", "1200", "1600", "2000"])
 
   if (requestedWidth && !allowedWidths.has(requestedWidth)) {
     return createErrorResponse("Ukuran gambar Google Drive tidak valid.", 400)

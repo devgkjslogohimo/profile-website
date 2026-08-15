@@ -105,7 +105,7 @@ async function PublicWorshipSchedulePage({ searchParams }: PublicWorshipSchedule
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicPageHeader
             eyebrow="Beribadah Bersama"

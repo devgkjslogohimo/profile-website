@@ -37,6 +37,7 @@ function PublicHeader({ settings, navigationItems, announcements }: PublicHeader
                 src="/gkj-slogohimo-logo.png"
                 alt={`Logo ${settings.siteName}`}
                 fill
+                quality={60}
                 priority
                 sizes="(max-width: 767px) 48px, 56px"
                 className="object-contain transition-transform duration-300 ease-out group-hover:scale-[1.03] motion-reduce:transition-none"

@@ -67,7 +67,7 @@ async function PublicWorshipScheduleDetailPage({ params }: PublicWorshipSchedule
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicBackLink href="/jadwal-ibadah" label="Kembali ke Jadwal Ibadah" />
 

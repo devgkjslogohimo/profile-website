@@ -73,7 +73,7 @@ async function PublicAnnouncementDetailPage({ params }: PublicAnnouncementDetail
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicBackLink href="/pengumuman" label="Kembali ke Pengumuman" />
 

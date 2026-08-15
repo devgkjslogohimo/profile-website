@@ -76,7 +76,7 @@ function normalizeGoogleDriveUrl(value: string): string | null {
   return url.toString()
 }
 
-export type GoogleDriveSourceWidth = 750 | 1000 | 1200 | 1600 | 2000
+export type GoogleDriveSourceWidth = 500 | 750 | 1000 | 1200 | 1600 | 2000
 
 type GoogleDriveMediaOptions = {
   sourceWidth?: GoogleDriveSourceWidth

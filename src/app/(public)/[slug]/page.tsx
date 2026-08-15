@@ -54,7 +54,7 @@ async function PublicSitePage({ params }: PublicSitePageProps) {
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <article className="mx-auto max-w-4xl">
             <PublicDetailHeader

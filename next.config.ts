@@ -38,7 +38,7 @@ const nextConfig: NextConfig = {
         pathname: "/gkj-slogohimo-logo.png",
       },
     ],
-    qualities: [75],
+    qualities: [60, 75],
   },
 
   async headers() {

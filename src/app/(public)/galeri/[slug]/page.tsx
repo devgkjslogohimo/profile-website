@@ -54,7 +54,7 @@ async function PublicGalleryDetailPage({ params }: PublicGalleryDetailPageProps)
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicBackLink href="/galeri" label="Kembali ke Galeri" />
 

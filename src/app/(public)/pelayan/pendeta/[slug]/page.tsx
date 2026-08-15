@@ -3,6 +3,11 @@ import { notFound } from "next/navigation"
 import { PublicBackLink } from "@/components/public/public-back-link"
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
+import {
+  ChurchServantPhotoLightbox,
+  ChurchServantPhotoLightboxImage,
+  ChurchServantPhotoLightboxTrigger,
+} from "@/features/public-site/components/church-servant-photo-lightbox"
 import { ProfilePortraitImage } from "@/features/public-site/components/profile-portrait-image"
 import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getPublicChurchPastorBySlug } from "@/features/public-site/queries/get-public-church-servants"
@@ -46,21 +51,56 @@ async function PublicPastorProfilePage({ params }: PublicPastorProfilePageProps)
     notFound()
   }
 
+  const pastorPeriod = `${dateFormatter.format(pastor.periodStart)} — ${
+    pastor.periodEnd ? dateFormatter.format(pastor.periodEnd) : "Sekarang"
+  }`
+
+  const pastorLightboxImages: ChurchServantPhotoLightboxImage[] = pastor.photoUrl
+    ? [
+        {
+          id: pastor.id,
+          photoUrl: pastor.photoUrl,
+          fullName: pastor.fullName,
+          position: "Pendeta",
+          locationName: "GKJ Slogohimo",
+          period: pastorPeriod,
+        },
+      ]
+    : []
+
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicBackLink href="/pelayan" label="Kembali ke Pelayan Gereja" />
 
           <article className="mx-auto mt-8 max-w-6xl">
             <div className="grid gap-9 md:grid-cols-[minmax(240px,320px)_minmax(0,1fr)] md:gap-10 lg:grid-cols-[minmax(280px,380px)_minmax(0,1fr)] lg:gap-16">
               <div className="w-full max-w-95">
-                <ProfilePortraitImage
-                  url={pastor.photoUrl}
-                  alt={`Foto ${pastor.fullName}`}
-                  eager
-                  sizes="(max-width: 767px) 100vw, 380px"
-                />
+                {pastor.photoUrl ? (
+                  <ChurchServantPhotoLightbox images={pastorLightboxImages}>
+                    <ChurchServantPhotoLightboxTrigger
+                      imageId={pastor.id}
+                      label={`Perbesar foto ${pastor.fullName}`}
+                    >
+                      <ProfilePortraitImage
+                        url={pastor.photoUrl}
+                        alt={`Foto ${pastor.fullName}`}
+                        eager
+                        fetchPriority="high"
+                        sourceWidth={1200}
+                        sizes="(max-width: 767px) 100vw, 380px"
+                      />
+                    </ChurchServantPhotoLightboxTrigger>
+                  </ChurchServantPhotoLightbox>
+                ) : (
+                  <ProfilePortraitImage
+                    url={null}
+                    alt={`Foto ${pastor.fullName}`}
+                    eager
+                    sizes="(max-width: 767px) 100vw, 380px"
+                  />
+                )}
               </div>
 
               <div className="min-w-0 md:pt-2">
@@ -72,11 +112,7 @@ async function PublicPastorProfilePage({ params }: PublicPastorProfilePageProps)
                   {pastor.fullName}
                 </h1>
 
-                <p className="mt-4 text-sm text-muted-foreground">
-                  {dateFormatter.format(pastor.periodStart)}
-                  {" — "}
-                  {pastor.periodEnd ? dateFormatter.format(pastor.periodEnd) : "Sekarang"}
-                </p>
+                <p className="mt-4 text-sm text-muted-foreground">{pastorPeriod}</p>
 
                 {pastor.summary ? (
                   <p className="mt-7 max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">

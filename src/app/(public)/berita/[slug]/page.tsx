@@ -65,7 +65,7 @@ async function PublicNewsDetailPage({ params }: PublicNewsDetailPageProps) {
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicBackLink href="/berita" label="Kembali ke Berita" />
 

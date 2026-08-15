@@ -87,7 +87,7 @@ async function PublicNewsPage({ searchParams }: PublicNewsPageProps) {
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicPageHeader
             eyebrow="Kabar Gereja"

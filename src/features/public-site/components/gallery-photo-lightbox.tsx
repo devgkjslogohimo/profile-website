@@ -33,6 +33,10 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
   const resolvedImages = useMemo(
     () =>
       images.flatMap((image, index) => {
+        const thumbnail500 = getGoogleDriveMediaUrl(image.imageUrl, {
+          sourceWidth: 500,
+        })
+
         const thumbnail750 = getGoogleDriveMediaUrl(image.imageUrl, {
           sourceWidth: 750,
         })
@@ -62,6 +66,7 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
             thumbnailSrc: thumbnail1000,
 
             thumbnailSrcSet: [
+              `${thumbnail500} 500w`,
               `${thumbnail750} 750w`,
               `${thumbnail1000} 1000w`,
               `${thumbnail1200} 1200w`,

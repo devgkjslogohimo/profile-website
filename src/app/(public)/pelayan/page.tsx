@@ -3,6 +3,11 @@ import { FiArrowRight, FiUsers } from "react-icons/fi"
 
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
+import {
+  ChurchServantPhotoLightbox,
+  ChurchServantPhotoLightboxImage,
+  ChurchServantPhotoLightboxTrigger,
+} from "@/features/public-site/components/church-servant-photo-lightbox"
 import { ProfilePortraitImage } from "@/features/public-site/components/profile-portrait-image"
 import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
 import { getPublicChurchServants } from "@/features/public-site/queries/get-public-church-servants"
@@ -27,9 +32,28 @@ async function PublicChurchServantsPage() {
 
   const councilMemberCount = councilGroups.reduce((total, group) => total + group.members.length, 0)
 
+  const councilLightboxImages: ChurchServantPhotoLightboxImage[] = councilGroups.flatMap((group) =>
+    group.members.flatMap((member) => {
+      if (!member.photoUrl) {
+        return []
+      }
+
+      return [
+        {
+          id: member.id,
+          photoUrl: member.photoUrl,
+          fullName: member.fullName,
+          position: member.position,
+          locationName: group.location.name,
+          period: formatPeriod(member.periodStart, member.periodEnd),
+        },
+      ]
+    })
+  )
+
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <header className="max-w-3xl">
             <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
@@ -117,67 +141,76 @@ async function PublicChurchServantsPage() {
             </div>
 
             {councilGroups.length > 0 ? (
-              <div className="mt-12 space-y-16 md:space-y-20">
-                {councilGroups.map((group) => {
-                  const locationType = group.location.type === "PEPANTHAN" ? "Pepanthan" : "Gereja"
+              <ChurchServantPhotoLightbox images={councilLightboxImages}>
+                <div className="mt-12 space-y-16 md:space-y-20">
+                  {councilGroups.map((group) => {
+                    const locationType =
+                      group.location.type === "PEPANTHAN" ? "Pepanthan" : "Gereja"
 
-                  return (
-                    <section key={group.location.id} className="border-t pt-7 md:pt-8">
-                      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold tracking-[0.14em] text-primary uppercase">
-                            {locationType}
-                          </p>
+                    return (
+                      <section key={group.location.id} className="border-t pt-7 md:pt-8">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                          <div className="min-w-0">
+                            <p className="text-xs font-semibold tracking-[0.14em] text-primary uppercase">
+                              {locationType}
+                            </p>
 
-                          <h3 className="mt-2 font-heading text-2xl leading-tight font-medium tracking-tight md:text-3xl">
-                            {group.location.name}
-                          </h3>
+                            <h3 className="mt-2 font-heading text-2xl leading-tight font-medium tracking-tight md:text-3xl">
+                              {group.location.name}
+                            </h3>
 
-                          <p className="mt-2 text-sm text-muted-foreground">
-                            {group.members.length} anggota Majelis
-                          </p>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                              {group.members.length} anggota Majelis
+                            </p>
+                          </div>
+
+                          <Link
+                            href={`/lokasi/${group.location.slug}`}
+                            className="group inline-flex w-fit items-center gap-2 text-sm font-medium text-primary"
+                          >
+                            Lihat Lokasi
+                            <FiArrowRight
+                              aria-hidden="true"
+                              className="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
+                            />
+                          </Link>
                         </div>
 
-                        <Link
-                          href={`/lokasi/${group.location.slug}`}
-                          className="group inline-flex w-fit items-center gap-2 text-sm font-medium text-primary"
-                        >
-                          Lihat Lokasi
-                          <FiArrowRight
-                            aria-hidden="true"
-                            className="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
-                          />
-                        </Link>
-                      </div>
+                        <div className="mt-7 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-4 lg:gap-x-7">
+                          {group.members.map((member) => (
+                            <article key={member.id} className="min-w-0">
+                              <ChurchServantPhotoLightboxTrigger
+                                imageId={member.id}
+                                label={`Perbesar foto ${member.fullName}`}
+                              >
+                                <ProfilePortraitImage
+                                  url={member.photoUrl}
+                                  alt={`Foto ${member.fullName}`}
+                                  sourceWidth={750}
+                                />
+                              </ChurchServantPhotoLightboxTrigger>
 
-                      <div className="mt-7 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-4 lg:gap-x-7">
-                        {group.members.map((member) => (
-                          <article key={member.id} className="min-w-0">
-                            <ProfilePortraitImage
-                              url={member.photoUrl}
-                              alt={`Foto ${member.fullName}`}
-                            />
+                              <div className="mt-4">
+                                <p className="text-[11px] leading-5 font-semibold tracking-[0.12em] text-primary uppercase sm:text-xs">
+                                  {member.position}
+                                </p>
 
-                            <div className="mt-4">
-                              <p className="text-[11px] leading-5 font-semibold tracking-[0.12em] text-primary uppercase sm:text-xs">
-                                {member.position}
-                              </p>
+                                <h4 className="mt-1.5 font-heading text-lg leading-snug font-medium sm:text-xl">
+                                  {member.fullName}
+                                </h4>
 
-                              <h4 className="mt-1.5 font-heading text-lg leading-snug font-medium sm:text-xl">
-                                {member.fullName}
-                              </h4>
-
-                              <p className="mt-1.5 text-xs leading-5 text-muted-foreground sm:text-sm">
-                                {formatPeriod(member.periodStart, member.periodEnd)}
-                              </p>
-                            </div>
-                          </article>
-                        ))}
-                      </div>
-                    </section>
-                  )
-                })}
-              </div>
+                                <p className="mt-1.5 text-xs leading-5 text-muted-foreground sm:text-sm">
+                                  {formatPeriod(member.periodStart, member.periodEnd)}
+                                </p>
+                              </div>
+                            </article>
+                          ))}
+                        </div>
+                      </section>
+                    )
+                  })}
+                </div>
+              </ChurchServantPhotoLightbox>
             ) : (
               <div className="mt-10 border-t py-10">
                 <p className="text-sm text-muted-foreground">

@@ -73,7 +73,7 @@ async function PublicPawartosDetailPage({ params }: PublicPawartosDetailPageProp
 
   return (
     <main>
-      <Section>
+      <Section spacing="page">
         <Container>
           <PublicBackLink href="/pawartos" label="Kembali ke Pawartos" />
 

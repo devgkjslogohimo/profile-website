@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { FiArrowRight, FiClock, FiExternalLink, FiMapPin } from "react-icons/fi"
+import { FiArrowRight, FiCalendar, FiClock, FiExternalLink, FiMapPin } from "react-icons/fi"
 
 import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
@@ -91,11 +91,42 @@ function HomeWorshipSection({ schedule }: HomeWorshipSectionProps) {
               Jadwal Ibadah Terdekat
             </h2>
 
-            <p className="mt-5 text-sm leading-7 text-primary-foreground/70 md:text-base">
-              {schedule
-                ? dateFormatter.format(schedule.date)
-                : "Jadwal ibadah berikutnya akan diperbarui melalui website."}
-            </p>
+            {schedule ? (
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <Link
+                  href={scheduleDetailUrl}
+                  className="group inline-flex items-center gap-3 rounded-xl border border-primary-foreground/20 bg-primary-foreground/[0.07] px-4 py-3 transition-colors hover:bg-primary-foreground/12"
+                >
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-foreground/10">
+                    <FiCalendar aria-hidden="true" className="size-4 text-primary-foreground/80" />
+                  </span>
+
+                  <span>
+                    <span className="block text-[0.65rem] font-semibold tracking-[0.16em] text-primary-foreground/55 uppercase">
+                      Jadwal Berikutnya
+                    </span>
+
+                    <span className="mt-0.5 block font-heading text-lg leading-tight font-medium text-primary-foreground sm:text-xl">
+                      {dateFormatter.format(schedule.date)}
+                    </span>
+                  </span>
+
+                  <FiArrowRight
+                    aria-hidden="true"
+                    className="ml-1 size-4 text-primary-foreground/55 transition-transform group-hover:translate-x-0.5 motion-reduce:transform-none"
+                  />
+                </Link>
+
+                <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary-foreground/15 bg-primary-foreground/8 px-3 py-1.5 text-xs font-medium text-primary-foreground/75">
+                  <FiClock aria-hidden="true" className="size-3.5" />
+                  Diperbarui setiap minggu
+                </p>
+              </div>
+            ) : (
+              <p className="mt-5 text-sm leading-7 text-primary-foreground/70 md:text-base">
+                Jadwal ibadah berikutnya akan diperbarui melalui website.
+              </p>
+            )}
           </div>
 
           <Link
@@ -157,39 +188,41 @@ function HomeWorshipSection({ schedule }: HomeWorshipSectionProps) {
 
               <div className="flex items-center px-0 py-8 lg:px-12 lg:py-10">
                 <div className="w-full">
-                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                    <p className="text-xs font-semibold tracking-[0.16em] text-primary-foreground/70 uppercase">
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+                    <p className="text-[0.68rem] font-semibold tracking-[0.16em] text-primary-foreground/70 uppercase">
                       {featuredService.churchLocation.type === "PEPANTHAN" ? "Pepanthan" : "Gereja"}
                     </p>
 
-                    <span
-                      aria-hidden="true"
-                      className="hidden h-px w-8 bg-primary-foreground/30 sm:block"
-                    />
+                    <span className="hidden h-px w-9 bg-primary-foreground/25 sm:block" />
 
-                    <p className="flex items-center gap-2 text-sm text-primary-foreground/70">
-                      <FiClock aria-hidden="true" className="size-4" />
+                    <p className="flex items-center gap-2 text-sm font-medium text-primary-foreground/75">
+                      <FiCalendar
+                        aria-hidden="true"
+                        className="size-4 shrink-0 text-primary-foreground/65"
+                      />
 
-                      <span>
-                        {timeFormatter.format(featuredService.startsAt).replace(".", ":")} WIB
-                      </span>
+                      {dateFormatter.format(schedule.date)}
                     </p>
 
-                    <span
-                      aria-hidden="true"
-                      className="hidden h-px w-8 bg-primary-foreground/30 sm:block"
-                    />
+                    <span className="hidden h-px w-9 bg-primary-foreground/25 sm:block" />
 
-                    <p className="text-xs font-semibold tracking-[0.12em] text-primary-foreground/70 uppercase">
-                      {getWorshipLanguageLabel(
-                        resolveWorshipLanguage(schedule.date, featuredService.languageOverride)
-                      )}
+                    <p className="flex items-center gap-2 text-sm font-medium text-primary-foreground/75">
+                      <FiClock
+                        aria-hidden="true"
+                        className="size-4 shrink-0 text-primary-foreground/65"
+                      />
+                      {timeFormatter.format(featuredService.startsAt).replace(".", ":")} WIB
                     </p>
                   </div>
 
                   <h3 className="mt-5 font-heading text-3xl leading-tight font-medium tracking-tight md:text-4xl">
                     {featuredService.name}
                   </h3>
+                  <p className="mt-2 text-[0.68rem] font-semibold tracking-[0.16em] text-primary-foreground/70 uppercase">
+                    {getWorshipLanguageLabel(
+                      resolveWorshipLanguage(schedule.date, featuredService.languageOverride)
+                    )}
+                  </p>
 
                   <p className="mt-5 flex items-start gap-3 text-sm leading-7 text-primary-foreground/70 md:text-base">
                     <FiMapPin aria-hidden="true" className="mt-1 size-4 shrink-0" />
@@ -268,7 +301,16 @@ function HomeWorshipSection({ schedule }: HomeWorshipSectionProps) {
                           </p>
                         </div>
 
-                        <h3 className="mt-5 font-heading text-2xl leading-snug font-medium tracking-tight">
+                        <div className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-primary-foreground/15 bg-primary-foreground/6 px-3 py-1.5 text-xs font-medium text-primary-foreground/70">
+                          <FiCalendar
+                            aria-hidden="true"
+                            className="size-3.5 shrink-0 text-primary-foreground/60"
+                          />
+
+                          <span>{dateFormatter.format(schedule.date)}</span>
+                        </div>
+
+                        <h3 className="mt-4 font-heading text-2xl leading-snug font-medium tracking-tight">
                           {service.name}
                         </h3>
 
