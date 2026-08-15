@@ -8,7 +8,10 @@ import { Container } from "@/components/shared/container"
 import { Section } from "@/components/shared/section"
 import { GalleryPhotoLightbox } from "@/features/public-site/components/gallery-photo-lightbox"
 import { createPublicPageMetadata } from "@/features/public-site/lib/public-metadata"
-import { getActiveGalleryAlbumBySlug } from "@/features/public-site/queries/get-public-content"
+import {
+  getActiveGalleryAlbumBySlug,
+  getActiveGalleryAlbums,
+} from "@/features/public-site/queries/get-public-content"
 
 type PublicGalleryDetailPageProps = {
   params: Promise<{
@@ -22,6 +25,14 @@ const dateFormatter = new Intl.DateTimeFormat("id-ID", {
   year: "numeric",
   timeZone: "UTC",
 })
+
+async function generateStaticParams() {
+  const albums = await getActiveGalleryAlbums()
+
+  return albums.map((album) => ({
+    slug: album.slug,
+  }))
+}
 
 async function generateMetadata({ params }: PublicGalleryDetailPageProps) {
   const { slug } = await params
@@ -135,5 +146,5 @@ async function PublicGalleryDetailPage({ params }: PublicGalleryDetailPageProps)
   )
 }
 
-export { generateMetadata }
+export { generateMetadata, generateStaticParams }
 export default PublicGalleryDetailPage
