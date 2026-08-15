@@ -33,7 +33,15 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
   const resolvedImages = useMemo(
     () =>
       images.flatMap((image, index) => {
-        const thumbnailSrc = getGoogleDriveMediaUrl(image.imageUrl, {
+        const thumbnail750 = getGoogleDriveMediaUrl(image.imageUrl, {
+          sourceWidth: 750,
+        })
+
+        const thumbnail1000 = getGoogleDriveMediaUrl(image.imageUrl, {
+          sourceWidth: 1000,
+        })
+
+        const thumbnail1200 = getGoogleDriveMediaUrl(image.imageUrl, {
           sourceWidth: 1200,
         })
 
@@ -41,7 +49,7 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
           sourceWidth: 2000,
         })
 
-        if (!thumbnailSrc || !fullSrc) {
+        if (!thumbnail750 || !thumbnail1000 || !thumbnail1200 || !fullSrc) {
           return []
         }
 
@@ -50,9 +58,19 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
         return [
           {
             id: image.id,
-            thumbnailSrc,
+
+            thumbnailSrc: thumbnail1000,
+
+            thumbnailSrcSet: [
+              `${thumbnail750} 750w`,
+              `${thumbnail1000} 1000w`,
+              `${thumbnail1200} 1200w`,
+            ].join(", "),
+
             fullSrc,
+
             alt,
+
             caption: image.caption,
           },
         ]
@@ -67,44 +85,34 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
   return (
     <>
       <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-        {resolvedImages.map((image, index) => (
-          <figure
-            key={image.id}
-            className="mb-4 break-inside-avoid overflow-hidden rounded-2xl border border-border/70 bg-background"
-          >
+        {resolvedImages.map((image, index) => {
+          const isFirstImage = index === 0
+
+          return (
             <button
+              key={image.id}
               type="button"
               onClick={() => setActiveIndex(index)}
               aria-label={`Perbesar ${image.alt}`}
-              title="Klik untuk memperbesar"
-              className="group relative block w-full cursor-zoom-in overflow-hidden bg-muted/30 text-left outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              className="group relative mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl text-left focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               <img
                 src={image.thumbnailSrc}
+                srcSet={image.thumbnailSrcSet}
+                sizes="(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1023px) calc(50vw - 2rem), calc(33.333vw - 2rem)"
                 alt={image.alt}
-                loading={index < 3 ? "eager" : "lazy"}
+                loading={isFirstImage ? "eager" : "lazy"}
+                fetchPriority={isFirstImage ? "high" : "auto"}
                 decoding="async"
-                fetchPriority={index === 0 ? "high" : "auto"}
-                className="block h-auto w-full transition-transform duration-700 ease-out group-hover:scale-[1.018] motion-reduce:transform-none motion-reduce:transition-none"
+                className="h-auto w-full transition-transform duration-300 ease-out group-hover:scale-[1.015] motion-reduce:transition-none"
               />
 
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 motion-reduce:transition-none"
-              />
-
-              <span className="pointer-events-none absolute right-3 bottom-3 z-10 flex size-10 items-center justify-center rounded-full border border-white/20 bg-black/55 text-white shadow-sm backdrop-blur-sm transition-opacity duration-300 motion-reduce:transition-none md:opacity-0 md:group-hover:opacity-100 md:group-focus-visible:opacity-100">
+              <span className="pointer-events-none absolute top-3 right-3 flex size-9 items-center justify-center rounded-full bg-black/55 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                 <FiMaximize2 aria-hidden="true" className="size-4" />
               </span>
             </button>
-
-            {image.caption ? (
-              <figcaption className="px-4 py-3 text-sm leading-6 text-muted-foreground">
-                {image.caption}
-              </figcaption>
-            ) : null}
-          </figure>
-        ))}
+          )
+        })}
       </div>
 
       <Lightbox
