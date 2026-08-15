@@ -33,7 +33,7 @@ export async function GET(request: Request, { params }: GoogleDriveMediaRoutePro
 
   const requestedWidth = requestUrl.searchParams.get("width")?.trim()
 
-  const allowedWidths = new Set(["400", "500", "750", "1000", "1200", "1600", "2000"])
+  const allowedWidths = new Set(["500", "750", "1000", "1200", "1600", "2000"])
 
   if (requestedWidth && !allowedWidths.has(requestedWidth)) {
     return createErrorResponse("Ukuran gambar Google Drive tidak valid.", 400)
@@ -90,7 +90,7 @@ export async function GET(request: Request, { params }: GoogleDriveMediaRoutePro
       status: 200,
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
+        "Cache-Control": "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800",
         "X-Content-Type-Options": "nosniff",
       },
     })
