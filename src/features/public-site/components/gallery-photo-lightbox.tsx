@@ -1,18 +1,15 @@
 "use client"
 
-import "yet-another-react-lightbox/plugins/captions.css"
-import "yet-another-react-lightbox/plugins/counter.css"
-import "yet-another-react-lightbox/styles.css"
-
-import { useMemo, useState } from "react"
+import { lazy, Suspense, useMemo, useState } from "react"
 import { FiMaximize2 } from "react-icons/fi"
-import Lightbox from "yet-another-react-lightbox"
-import Captions from "yet-another-react-lightbox/plugins/captions"
-import Counter from "yet-another-react-lightbox/plugins/counter"
-import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen"
-import Zoom from "yet-another-react-lightbox/plugins/zoom"
 
 import { getGoogleDriveMediaUrl } from "@/lib/google-drive"
+
+const GalleryLightboxViewer = lazy(() =>
+  import("./gallery-lightbox-viewer").then((module) => ({
+    default: module.GalleryLightboxViewer,
+  }))
+)
 
 type GalleryPhotoLightboxImage = {
   id: string
@@ -61,26 +58,30 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
         return [
           {
             id: image.id,
-
             thumbnail500,
-
             thumbnailSrc: thumbnail1000,
-
             thumbnailSrcSet: [
               `${thumbnail750} 750w`,
               `${thumbnail1000} 1000w`,
               `${thumbnail1200} 1200w`,
             ].join(", "),
-
             fullSrc,
-
             alt,
-
             caption: image.caption,
           },
         ]
       }),
     [albumTitle, images]
+  )
+
+  const lightboxSlides = useMemo(
+    () =>
+      resolvedImages.map((image) => ({
+        src: image.fullSrc,
+        alt: image.alt,
+        description: image.caption || undefined,
+      })),
+    [resolvedImages]
   )
 
   if (resolvedImages.length === 0) {
@@ -124,52 +125,16 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
         })}
       </div>
 
-      <Lightbox
-        open={activeIndex !== null}
-        close={() => setActiveIndex(null)}
-        index={activeIndex ?? 0}
-        slides={resolvedImages.map((image) => ({
-          src: image.fullSrc,
-          alt: image.alt,
-          description: image.caption || undefined,
-        }))}
-        plugins={[Captions, Counter, Fullscreen, Zoom]}
-        on={{
-          view: ({ index }) => setActiveIndex(index),
-        }}
-        animation={{
-          fade: 220,
-          swipe: 420,
-          navigation: 320,
-
-          easing: {
-            fade: "ease-out",
-            swipe: "cubic-bezier(0.22, 1, 0.36, 1)",
-            navigation: "cubic-bezier(0.22, 1, 0.36, 1)",
-          },
-        }}
-        carousel={{
-          imageFit: "contain",
-          padding: 16,
-          spacing: "12%",
-          preload: 2,
-        }}
-        controller={{
-          closeOnBackdropClick: true,
-          closeOnPullDown: true,
-        }}
-        captions={{
-          descriptionTextAlign: "start",
-          descriptionMaxLines: 4,
-        }}
-        counter={{
-          separator: " / ",
-        }}
-        zoom={{
-          maxZoomPixelRatio: 2.5,
-          scrollToZoom: true,
-        }}
-      />
+      {activeIndex !== null ? (
+        <Suspense fallback={null}>
+          <GalleryLightboxViewer
+            index={activeIndex}
+            slides={lightboxSlides}
+            onClose={() => setActiveIndex(null)}
+            onView={setActiveIndex}
+          />
+        </Suspense>
+      ) : null}
     </>
   )
 }
