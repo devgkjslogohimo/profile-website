@@ -29,6 +29,10 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
   const resolvedImages = useMemo(
     () =>
       images.flatMap((image, index) => {
+        const thumbnail400 = getGoogleDriveMediaUrl(image.imageUrl, {
+          sourceWidth: 400,
+        })
+
         const thumbnail500 = getGoogleDriveMediaUrl(image.imageUrl, {
           sourceWidth: 500,
         })
@@ -49,7 +53,14 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
           sourceWidth: 2000,
         })
 
-        if (!thumbnail500 || !thumbnail750 || !thumbnail1000 || !thumbnail1200 || !fullSrc) {
+        if (
+          !thumbnail400 ||
+          !thumbnail500 ||
+          !thumbnail750 ||
+          !thumbnail1000 ||
+          !thumbnail1200 ||
+          !fullSrc
+        ) {
           return []
         }
 
@@ -58,6 +69,7 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
         return [
           {
             id: image.id,
+            thumbnail400,
             thumbnail500,
             thumbnailSrc: thumbnail1000,
             thumbnailSrcSet: [
@@ -73,7 +85,6 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
       }),
     [albumTitle, images]
   )
-
   const lightboxSlides = useMemo(
     () =>
       resolvedImages.map((image) => ({
@@ -103,6 +114,7 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
               className="group relative mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl text-left focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               <picture>
+                <source media="(max-width: 439px)" srcSet={image.thumbnail400} />
                 <source media="(max-width: 639px)" srcSet={image.thumbnail500} />
 
                 <img
