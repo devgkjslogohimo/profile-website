@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import "yet-another-react-lightbox/plugins/captions.css"
@@ -53,7 +52,7 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
           sourceWidth: 2000,
         })
 
-        if (!thumbnail750 || !thumbnail1000 || !thumbnail1200 || !fullSrc) {
+        if (!thumbnail500 || !thumbnail750 || !thumbnail1000 || !thumbnail1200 || !fullSrc) {
           return []
         }
 
@@ -63,10 +62,11 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
           {
             id: image.id,
 
+            thumbnail500,
+
             thumbnailSrc: thumbnail1000,
 
             thumbnailSrcSet: [
-              `${thumbnail500} 500w`,
               `${thumbnail750} 750w`,
               `${thumbnail1000} 1000w`,
               `${thumbnail1200} 1200w`,
@@ -101,16 +101,20 @@ function GalleryPhotoLightbox({ albumTitle, images }: GalleryPhotoLightboxProps)
               aria-label={`Perbesar ${image.alt}`}
               className="group relative mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl text-left focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
             >
-              <img
-                src={image.thumbnailSrc}
-                srcSet={image.thumbnailSrcSet}
-                sizes="(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1023px) calc(50vw - 2rem), calc(33.333vw - 2rem)"
-                alt={image.alt}
-                loading={isFirstImage ? "eager" : "lazy"}
-                fetchPriority={isFirstImage ? "high" : "auto"}
-                decoding="async"
-                className="h-auto w-full transition-transform duration-300 ease-out group-hover:scale-[1.015] motion-reduce:transition-none"
-              />
+              <picture>
+                <source media="(max-width: 639px)" srcSet={image.thumbnail500} />
+
+                <img
+                  src={image.thumbnailSrc}
+                  srcSet={image.thumbnailSrcSet}
+                  sizes="(max-width: 1023px) calc(50vw - 2rem), calc(33.333vw - 2rem)"
+                  alt={image.alt}
+                  loading={isFirstImage ? "eager" : "lazy"}
+                  fetchPriority={isFirstImage ? "high" : "auto"}
+                  decoding={isFirstImage ? "sync" : "async"}
+                  className="h-auto w-full transition-transform duration-300 ease-out group-hover:scale-[1.015] motion-reduce:transition-none"
+                />
+              </picture>
 
               <span className="pointer-events-none absolute top-3 right-3 flex size-9 items-center justify-center rounded-full bg-black/55 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                 <FiMaximize2 aria-hidden="true" className="size-4" />
