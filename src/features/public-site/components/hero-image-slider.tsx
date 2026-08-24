@@ -105,7 +105,7 @@ function HeroImageSlider({ slides }: HeroImageSliderProps) {
             <div
               key={slide.id}
               aria-hidden={!isActive}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-out motion-reduce:transition-none ${
+              className={`absolute inset-0 transition-opacity duration-300 ease-out motion-reduce:transition-none ${
                 isActive ? "opacity-100" : "pointer-events-none opacity-0"
               }`}
             >
