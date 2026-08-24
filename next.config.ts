@@ -38,6 +38,7 @@ const nextConfig: NextConfig = {
         pathname: "/gkj-slogohimo-logo.png",
       },
     ],
+    formats: ["image/avif", "image/webp"],
     qualities: [60, 75],
     imageSizes: [16, 32, 48, 64, 96, 128, 160, 192, 256, 384],
     minimumCacheTTL: 86400,

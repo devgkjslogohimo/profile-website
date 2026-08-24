@@ -17,7 +17,7 @@ type HeroImageSliderProps = {
 }
 
 const SLIDE_DURATION = 6000
-const PRELOAD_LEAD_TIME = 500
+const PRELOAD_LEAD_TIME = 1500
 
 function HeroImageSlider({ slides }: HeroImageSliderProps) {
   const [activeIndex, setActiveIndex] = useState(0)
