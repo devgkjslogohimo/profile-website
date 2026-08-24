@@ -17,7 +17,7 @@ type HeroImageSliderProps = {
 }
 
 const SLIDE_DURATION = 6000
-const PRELOAD_LEAD_TIME = 1500
+const PRELOAD_LEAD_TIME = 500
 
 function HeroImageSlider({ slides }: HeroImageSliderProps) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -117,7 +117,6 @@ function HeroImageSlider({ slides }: HeroImageSliderProps) {
                 quality={75}
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
-                decoding={index === 0 ? "sync" : "async"}
                 className="object-cover"
               />
             </div>
