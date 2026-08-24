@@ -102,8 +102,8 @@ function HomeWorshipSection({ schedule }: HomeWorshipSectionProps) {
                   </span>
 
                   <span>
-                    <span className="block text-[0.65rem] font-semibold tracking-[0.16em] text-primary-foreground/55 uppercase">
-                      Jadwal Berikutnya
+                    <span className="block text-[0.65rem] font-semibold tracking-[0.16em] text-primary-foreground uppercase">
+                      Jadwal berikutnya
                     </span>
 
                     <span className="mt-0.5 block font-heading text-lg leading-tight font-medium text-primary-foreground sm:text-xl">

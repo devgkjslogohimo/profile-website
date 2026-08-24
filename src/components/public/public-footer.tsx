@@ -34,11 +34,7 @@ function PublicFooter({ settings, navigationItems }: PublicFooterProps) {
         <div className="grid gap-8 lg:grid-cols-12 lg:gap-10">
           {/* Identitas */}
           <div className="lg:col-span-5">
-            <Link
-              href="/"
-              aria-label={`${settings.siteName} - Beranda`}
-              className="group inline-flex items-center gap-3.5"
-            >
+            <Link href="/" className="group inline-flex items-center gap-3.5">
               <div className="relative size-14 shrink-0 sm:size-16">
                 <Image
                   src="/gkj-slogohimo-logo.png"
