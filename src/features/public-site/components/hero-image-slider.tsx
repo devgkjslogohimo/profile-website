@@ -105,7 +105,7 @@ function HeroImageSlider({ slides }: HeroImageSliderProps) {
             <div
               key={slide.id}
               aria-hidden={!isActive}
-              className={`absolute inset-0 transition-opacity duration-300 ease-out motion-reduce:transition-none ${
+              className={`absolute inset-0 transition-opacity duration-1000 ease-out motion-reduce:transition-none ${
                 isActive ? "opacity-100" : "pointer-events-none opacity-0"
               }`}
             >
@@ -117,6 +117,7 @@ function HeroImageSlider({ slides }: HeroImageSliderProps) {
                 quality={75}
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
+                decoding={index === 0 ? "sync" : "async"}
                 className="object-cover"
               />
             </div>
