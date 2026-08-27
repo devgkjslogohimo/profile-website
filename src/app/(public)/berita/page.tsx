@@ -163,6 +163,8 @@ async function PublicNewsPage({ searchParams }: PublicNewsPageProps) {
                       alt={`Cover ${featured.title}`}
                       className="h-full rounded-none border-0"
                       eager
+                      fetchPriority="high"
+                      sizes="(max-width: 767px) calc(100vw - 2.5rem), (max-width: 1023px) calc(100vw - 4rem), 560px"
                     />
                   </Link>
 
@@ -241,6 +243,7 @@ async function PublicNewsPage({ searchParams }: PublicNewsPageProps) {
                             alt={`Cover ${item.title}`}
                             className="rounded-none border-0"
                             eager={!featured && index === 0}
+                            sizes="(max-width: 767px) calc(100vw - 2.5rem), (max-width: 1023px) calc(50vw - 2.5rem), 400px"
                           />
                         </Link>
 
