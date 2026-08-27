@@ -90,8 +90,6 @@ async function PublicNewsDetailPage({ params }: PublicNewsDetailPageProps) {
                   alt={`Cover ${news.title}`}
                   className="rounded-none border-0"
                   eager
-                  fetchPriority="high"
-                  sizes="(max-width: 767px) calc(100vw - 2.5rem), (max-width: 1023px) calc(100vw - 4rem), 760px"
                 />
 
                 <div className="mt-10 max-w-3xl">
