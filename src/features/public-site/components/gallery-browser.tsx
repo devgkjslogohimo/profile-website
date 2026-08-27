@@ -262,6 +262,7 @@ function GalleryBrowser({ albums, initialYear }: GalleryBrowserProps) {
                     eager
                     fetchPriority="high"
                     sourceWidth={1600}
+                    sizes="(max-width: 767px) calc(100vw - 2.5rem), (max-width: 1279px) calc(100vw - 4rem), 1200px"
                   />
 
                   <div
@@ -341,6 +342,11 @@ function GalleryBrowser({ albums, initialYear }: GalleryBrowserProps) {
                       className="absolute inset-0 h-full w-full rounded-none border-0 [&_img]:aspect-auto [&_img]:h-full [&_img]:w-full [&_img]:object-cover [&_img]:transition-transform [&_img]:duration-700 [&_img]:ease-out group-hover:[&_img]:scale-[1.025] motion-reduce:[&_img]:transform-none motion-reduce:[&_img]:transition-none"
                       eager
                       sourceWidth={1200}
+                      sizes={
+                        index === 0
+                          ? "(max-width: 767px) calc(100vw - 2.5rem), (max-width: 1023px) calc(100vw - 4rem), 500px"
+                          : "(max-width: 767px) calc(100vw - 2.5rem), (max-width: 1023px) calc(100vw - 4rem), 700px"
+                      }
                     />
 
                     <div
@@ -416,6 +422,7 @@ function GalleryBrowser({ albums, initialYear }: GalleryBrowserProps) {
                       alt={image.alt}
                       className="h-full min-h-28 w-full rounded-none border-0 [&_img]:aspect-auto [&_img]:h-full [&_img]:w-full [&_img]:object-cover [&_img]:transition-transform [&_img]:duration-700 [&_img]:ease-out group-hover:[&_img]:scale-[1.025] motion-reduce:[&_img]:transform-none motion-reduce:[&_img]:transition-none"
                       sourceWidth={750}
+                      sizes="(max-width: 639px) 7rem, 9rem"
                     />
 
                     <div className="flex min-w-0 flex-col justify-center px-4 py-4 sm:px-5">

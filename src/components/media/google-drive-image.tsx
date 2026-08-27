@@ -10,6 +10,7 @@ type GoogleDriveImageProps = {
   eager?: boolean
   fetchPriority?: "high" | "low" | "auto"
   sourceWidth?: GoogleDriveSourceWidth
+  sizes?: string
 }
 
 function GoogleDriveImage({
@@ -19,6 +20,7 @@ function GoogleDriveImage({
   eager = false,
   fetchPriority = "auto",
   sourceWidth,
+  sizes = "(max-width: 768px) 100vw, 50vw",
 }: GoogleDriveImageProps) {
   const imageUrl = url
     ? getGoogleDriveMediaUrl(url, sourceWidth ? { sourceWidth } : undefined)
@@ -47,7 +49,7 @@ function GoogleDriveImage({
         alt={alt}
         width={1600}
         height={900}
-        sizes="(max-width: 768px) 100vw, 50vw"
+        sizes={sizes}
         loading={eager ? "eager" : "lazy"}
         fetchPriority={fetchPriority}
         className="aspect-video h-auto w-full object-cover"
