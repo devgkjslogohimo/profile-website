@@ -69,7 +69,7 @@ async function PublicChurchLocationsPage() {
                           src={coverUrl}
                           alt={location.coverAltText ?? `Foto utama ${location.name}`}
                           fill
-                          sizes="(max-width: 1024px) 100vw, 38vw"
+                          sizes="(max-width: 1024px) calc(100vw - 2.5rem), 38vw"
                           loading={index === 0 ? "eager" : "lazy"}
                           fetchPriority={index === 0 ? "high" : "auto"}
                           className="object-cover"
