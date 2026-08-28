@@ -3,16 +3,17 @@ import { type NextRequest, NextResponse } from "next/server"
 import { ADMIN_SESSION_COOKIE_NAME } from "@/lib/auth/session-constants"
 
 function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl
-
-  const isLoginPage = pathname === "/admin/login"
   const hasSessionCookie = request.cookies.has(ADMIN_SESSION_COOKIE_NAME)
 
-  if (!isLoginPage && !hasSessionCookie) {
-    const loginUrl = new URL("/admin/login", request.url)
-    loginUrl.searchParams.set("next", pathname)
-
-    return NextResponse.redirect(loginUrl)
+  if (!hasSessionCookie) {
+    return new NextResponse("Not Found", {
+      status: 404,
+      headers: {
+        "Cache-Control": "private, no-store",
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+      },
+    })
   }
 
   return NextResponse.next()

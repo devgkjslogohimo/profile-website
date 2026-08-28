@@ -2,6 +2,7 @@ import "server-only"
 
 import { redirect } from "next/navigation"
 
+import { getAdminLoginPath } from "@/lib/auth/admin-login-entry"
 import { hasPermission, type Permission } from "@/lib/auth/permissions"
 import { getAdminSession } from "@/lib/auth/session"
 import { prisma } from "@/lib/db/prisma"
@@ -50,7 +51,7 @@ async function requireUser(): Promise<CurrentAdminUser> {
   const user = await getCurrentUser()
 
   if (!user) {
-    redirect("/admin/login")
+    redirect(getAdminLoginPath())
   }
 
   return user

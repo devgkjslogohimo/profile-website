@@ -1,13 +1,18 @@
+import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
 
 import { AdminHeader } from "@/components/admin/admin-header"
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/toast"
-import { requireUser } from "@/dal/auth"
+import { getCurrentUser } from "@/dal/auth"
 
 export default async function ProtectedAdminLayout({ children }: { children: ReactNode }) {
-  const user = await requireUser()
+  const user = await getCurrentUser()
+
+  if (!user) {
+    notFound()
+  }
 
   return (
     <SidebarProvider>
